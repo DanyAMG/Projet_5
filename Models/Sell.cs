@@ -7,9 +7,10 @@
         DateOnly DisponibilityDate { get; set; }
         DateOnly SellingDate { get; set; }
         Boolean Selled { get; set; }
+        Boolean Available { get; set; }
 
         //Foreigner Key
         public string VIN { get; set; }
-        public Vehicule Vehicule { get; set; }
+        public Vehicle vehicle { get; set; }
     }
 }

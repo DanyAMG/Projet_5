@@ -89,7 +89,7 @@ namespace Projet_5.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Vehicules",
+                name: "vehicles",
                 columns: table => new
                 {
                     VIN = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -100,7 +100,7 @@ namespace Projet_5.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Vehicules", x => x.VIN);
+                    table.PrimaryKey("PK_vehicles", x => x.VIN);
                 });
 
             migrationBuilder.CreateTable(
@@ -277,7 +277,7 @@ namespace Projet_5.Migrations
                 name: "Sells");
 
             migrationBuilder.DropTable(
-                name: "Vehicules");
+                name: "vehicles");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
