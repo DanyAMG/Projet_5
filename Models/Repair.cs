@@ -1,4 +1,6 @@
-﻿namespace Projet_5.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Projet_5.Models
 {
     public class Repair
     {
@@ -7,6 +9,7 @@
         public float ReparationCost { get; set; }
 
         //Foreginer Key
+        [ForeignKey(nameof(vehicle))]
         public string VIN { get; set; }
         public Vehicle vehicle { get; set; }
     }

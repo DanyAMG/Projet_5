@@ -11,6 +11,7 @@ namespace Projet_5.Models
         public string Brand { get; set; }
         public string Model { get; set; }
         public string Finition { get; set; }
+        public bool IsAvailable { get; set; }
 
         //A vehicle can just be purchased or selled one time
         public Purchase Purchase { get; set; } // one-to-one relation with Purchase

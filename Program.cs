@@ -46,8 +46,6 @@ app.MapRazorPages();
 
 app.Run();
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseSqlServer("DefaultConnection"));
 
 //Save the services for dependancies injection
 builder.Services.AddScoped<IVehicleService, VehicleService>();
@@ -55,5 +53,4 @@ builder.Services.AddScoped<IPurchaseService, PurchaseService>();
 builder.Services.AddScoped<ISellService, SellService>();
 builder.Services.AddScoped<IRepairService, RepairService>();
 
-builder.Services.AddControllersWithViews();
 
