@@ -273,7 +273,7 @@ namespace Projet_5.Migrations
                     b.ToTable("Sells");
                 });
 
-            modelBuilder.Entity("Projet_5.Models.Vehicule", b =>
+            modelBuilder.Entity("Projet_5.Models.vehicle", b =>
                 {
                     b.Property<string>("VIN")
                         .HasColumnType("nvarchar(450)");
@@ -295,7 +295,7 @@ namespace Projet_5.Migrations
 
                     b.HasKey("VIN");
 
-                    b.ToTable("Vehicules");
+                    b.ToTable("vehicles");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

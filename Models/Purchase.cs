@@ -8,6 +8,6 @@
 
         //Foreigner Key
         public string VIN {  get; set; }
-        public Vehicule Vehicule { get; set; }
+        public Vehicle vehicle { get; set; }
     }
 }
