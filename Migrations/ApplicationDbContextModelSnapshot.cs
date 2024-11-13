@@ -232,7 +232,30 @@ namespace Projet_5.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<float>("BuyingPrice")
+                        .HasColumnType("real");
+
+                    b.Property<DateTime>("PurchaseDate")
+                        .HasColumnType("DateTime2");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("VehicleId1")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("VehicleId2")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("VehicleId");
+
+                    b.HasIndex("VehicleId1");
+
+                    b.HasIndex("VehicleId2")
+                        .IsUnique()
+                        .HasFilter("[VehicleId2] IS NOT NULL");
 
                     b.ToTable("Purchases");
                 });
@@ -252,7 +275,17 @@ namespace Projet_5.Migrations
                     b.Property<float>("ReparationCost")
                         .HasColumnType("real");
 
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("VehicleId1")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("VehicleId");
+
+                    b.HasIndex("VehicleId1");
 
                     b.ToTable("Repairs");
                 });
@@ -265,15 +298,41 @@ namespace Projet_5.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("SellingDate")
+                        .HasColumnType("DateTime2");
+
+                    b.Property<float>("SellingPrice")
+                        .HasColumnType("real");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("VehicleId1")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("VehicleId2")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("VehicleId");
+
+                    b.HasIndex("VehicleId1");
+
+                    b.HasIndex("VehicleId2")
+                        .IsUnique()
+                        .HasFilter("[VehicleId2] IS NOT NULL");
 
                     b.ToTable("Sells");
                 });
 
-            modelBuilder.Entity("Projet_5.Models.vehicle", b =>
+            modelBuilder.Entity("Projet_5.Models.Vehicle", b =>
                 {
-                    b.Property<string>("VIN")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Brand")
                         .IsRequired()
@@ -283,16 +342,23 @@ namespace Projet_5.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Model")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VIN")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Year")
                         .HasColumnType("int");
 
-                    b.HasKey("VIN");
+                    b.HasKey("Id");
 
-                    b.ToTable("vehicles");
+                    b.ToTable("Vehicles");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -344,6 +410,74 @@ namespace Projet_5.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Projet_5.Models.Purchase", b =>
+                {
+                    b.HasOne("Projet_5.Models.Vehicle", "Vehicle")
+                        .WithMany()
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Projet_5.Models.Vehicle", null)
+                        .WithMany("Purchases")
+                        .HasForeignKey("VehicleId1");
+
+                    b.HasOne("Projet_5.Models.Vehicle", null)
+                        .WithOne("Purchase")
+                        .HasForeignKey("Projet_5.Models.Purchase", "VehicleId2");
+
+                    b.Navigation("Vehicle");
+                });
+
+            modelBuilder.Entity("Projet_5.Models.Repair", b =>
+                {
+                    b.HasOne("Projet_5.Models.Vehicle", "Vehicle")
+                        .WithMany()
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Projet_5.Models.Vehicle", null)
+                        .WithMany("Repairs")
+                        .HasForeignKey("VehicleId1");
+
+                    b.Navigation("Vehicle");
+                });
+
+            modelBuilder.Entity("Projet_5.Models.Sell", b =>
+                {
+                    b.HasOne("Projet_5.Models.Vehicle", "Vehicle")
+                        .WithMany()
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Projet_5.Models.Vehicle", null)
+                        .WithMany("Sells")
+                        .HasForeignKey("VehicleId1");
+
+                    b.HasOne("Projet_5.Models.Vehicle", null)
+                        .WithOne("Sell")
+                        .HasForeignKey("Projet_5.Models.Sell", "VehicleId2");
+
+                    b.Navigation("Vehicle");
+                });
+
+            modelBuilder.Entity("Projet_5.Models.Vehicle", b =>
+                {
+                    b.Navigation("Purchase")
+                        .IsRequired();
+
+                    b.Navigation("Purchases");
+
+                    b.Navigation("Repairs");
+
+                    b.Navigation("Sell")
+                        .IsRequired();
+
+                    b.Navigation("Sells");
                 });
 #pragma warning restore 612, 618
         }

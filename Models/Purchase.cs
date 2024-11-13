@@ -1,13 +1,22 @@
-﻿namespace Projet_5.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Projet_5.Models;
+
+namespace Projet_5.Models
 {
     public class Purchase
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        float BuyingPrice { get; set; }
-        DateOnly PurchaseDate { get; set; }
-
+        public float BuyingPrice { get; set; }
+        [Column(TypeName = "DateTime2")]
+        public DateTime PurchaseDate { get; set; }
         //Foreigner Key
-        public string VIN {  get; set; }
-        public Vehicle vehicle { get; set; }
+        [ForeignKey("Vehicle")]
+        public int VehicleId { get; set; }
+        public Vehicle Vehicle { get; set; }
+        [NotMapped]
+        public string VIN=> Vehicle?.VIN;
     }
 }
