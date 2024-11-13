@@ -33,13 +33,19 @@ namespace Projet_5.Models.Services
             return repair;
         }
 
-        public async Task RemoveRepairAsync(int id)
+        public async Task<bool> RemoveRepairAsync(int id)
         {
             var repair = await _context.Repairs.FindAsync(id);
             if (repair != null)
             {
                 _context.Repairs.Remove(repair);
                 await _context.SaveChangesAsync();
+
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
     }

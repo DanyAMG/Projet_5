@@ -78,5 +78,27 @@ namespace Projet_5.Controllers
             }
             return NoContent();
         }
+
+        [HttpPatch("{vin}/available")]
+        public async Task<IActionResult> MarkVehicleAsAvailable(string vin)
+        {
+            var marked = await _vehicleService.MarkVehicleAsAvailable(vin);
+            if(!marked)
+            {
+                return NotFound();
+            }
+            return NoContent();
+        }
+
+        [HttpPatch("{vin}/available")]
+        public async Task<IActionResult> MarkVehicleAsUnavailable(string vin)
+        {
+            var unmarked = await _vehicleService.MarkVehicleAsUnavailable(vin);
+            if (!unmarked)
+            {
+                return NotFound();
+            }
+            return NoContent();
+        }
     }
 }
