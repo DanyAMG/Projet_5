@@ -3,16 +3,18 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Projet_5.Models
 {
-    public class Repair
+    public class Transaction
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; } //Primary Key
-        public string Reparation { get; set; }
-        public float Cost { get; set; }
+        public float Amount { get; set; }
+
+        [Column(TypeName = "DateTime2")]
+        public DateTime TransactionDate { get; set; }
 
 
-        //Foreginer Key to Vehicle
+        //Foreigner Key to Vehicle
         public int VehicleId { get; set; }
         public Vehicle Vehicle { get; set; }
 

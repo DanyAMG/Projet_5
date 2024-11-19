@@ -16,20 +16,18 @@ namespace Projet_5.Models.Services
         public async Task<Vehicle> GetVehicleByVinAsync(string vin)
         {
             return await _context.Vehicles
-                .Include(v => v.Purchase)
-                .Include(v => v.Sell)
+                .Include(v => v.Transactions)
+                .Include(v => v.Annoucements)
                 .Include(v => v.Repairs)
-                .Include(v => v.IsAvailable)
                 .FirstOrDefaultAsync(v => v.VIN == vin);
         }
 
         public async Task<List<Vehicle>> GetAllVehiclesAsync()
         {
             return await _context.Vehicles
-                .Include(v => v.Purchase)
-                .Include(v => v.Sell)
+                .Include(v => v.Transactions)
+                .Include(v => v.Annoucements)
                 .Include(v => v.Repairs)
-                .Include(v => v.IsAvailable)
                 .ToListAsync();
         }
 
@@ -40,13 +38,13 @@ namespace Projet_5.Models.Services
             return vehicle;
         }
 
-        public async Task<Vehicle> UpdateVehicleAsync(string vin, Vehicle vehicle)
+        public async Task<bool> UpdateVehicleAsync(string vin, Vehicle vehicle)
         {
             var existingVehicle = await GetVehicleByVinAsync(vin);
 
             if (existingVehicle == null)
             {
-                return null;
+                return false;
             }
             else
             {
@@ -54,10 +52,12 @@ namespace Projet_5.Models.Services
                 existingVehicle.Brand = vehicle.Brand;
                 existingVehicle.Model = vehicle.Model;
                 existingVehicle.Finition = vehicle.Finition;
-            }
-            await _context.SaveChangesAsync();
 
-            return existingVehicle;
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            
         }
 
         public async Task<bool> DeleteVehicleAsync(string vin)
@@ -74,41 +74,6 @@ namespace Projet_5.Models.Services
 
                 return true;
             }
-        }
-
-        public async Task<bool> MarkVehicleAsAvailable(string vin)
-        {
-            var vehicle = await GetVehicleByVinAsync(vin);
-
-            if (vehicle == null)
-            {
-                return false;
-            }
-            else
-            {
-                vehicle.IsAvailable = true;
-            }
-
-            _context.SaveChangesAsync();
-            return true;
-
-        }
-
-        public async Task<bool> MarkVehicleAsUnavailable(string vin)
-        {
-            var vehicle = await GetVehicleByVinAsync(vin);
-
-            if (vehicle == null)
-            {
-                return false;
-            }
-            else
-            {
-                vehicle.IsAvailable = false;
-            }
-
-            _context.SaveChangesAsync();
-            return true;
         }
     }
 }

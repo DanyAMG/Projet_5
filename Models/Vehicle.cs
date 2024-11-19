@@ -13,15 +13,15 @@ namespace Projet_5.Models
         public string Brand { get; set; }
         public string Model { get; set; }
         public string Finition { get; set; }
-        public bool IsAvailable { get; set; }
 
-        //A vehicle can just be purchased or selled one time
-        public Purchase Purchase { get; set; } // one-to-one relation with Purchase
-        public Sell Sell { get; set; } //one-to-one relation with Sell
+        
+        //Foreigner Key to repair
+        public ICollection<Repair> Repairs { get; set; } //one-to-many relation with Repair
 
-        //A vehicle can have one or more repairs
-        public List<Repair> Repairs { get; set; } //one-to-many relation with Repair
-        public ICollection<Purchase> Purchases { get; set; }
-        public ICollection<Sell> Sells { get; set; }
+        //Foreigner Key to Transaction
+        public ICollection<Transaction> Transactions { get; set; } //one-to-many relation with Transaction
+
+        //Foreigner Key to Announcement
+        public ICollection<Announcement> Annoucements { get; set; } //one-to-many relation with Announcement
     }
 }

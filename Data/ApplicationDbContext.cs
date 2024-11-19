@@ -8,8 +8,8 @@ namespace Projet_5.Data
     {
         //entities
         public DbSet<Vehicle> Vehicles { get; set; }
-        public DbSet<Purchase> Purchases { get; set; }
-        public DbSet<Sell> Sells { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<Announcement> Announcements { get; set; }
         public DbSet<Repair> Repairs { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
@@ -21,23 +21,35 @@ namespace Projet_5.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Purchase>()
-                .HasOne(p => p.Vehicle)
-                .WithMany()
-                .HasForeignKey(p => p.VehicleId)
-                .OnDelete(DeleteBehavior.Restrict);
+            //One-to-Many relation between Vehicle and Announcement
+            modelBuilder.Entity<Vehicle>()
+                .HasMany(v => v.Annoucements)
+                .WithOne(a => a.Vehicle)
+                .HasForeignKey(a => a.VehicleId);
 
-            modelBuilder.Entity<Sell>()
-                .HasOne(s => s.Vehicle)
-                .WithMany()
-                .HasForeignKey(s => s.VehicleId)
-                .OnDelete(DeleteBehavior.Restrict);
+            //One-to-Many relation between Vehicle and Transaction
+            modelBuilder.Entity<Vehicle>()
+                .HasMany(v => v.Transactions)
+                .WithOne(t => t.Vehicle)
+                .HasForeignKey(t => t.VehicleId);
 
+            //One-to-Many relation between Vehicle and Repair
+            modelBuilder.Entity<Vehicle>()
+                .HasMany(v=> v.Repairs)
+                .WithOne(r => r.Vehicle)
+                .HasForeignKey(r => r.VehicleId);
+
+            //One-to-Many relation between Announcement and Transaction
+            modelBuilder.Entity<Transaction>()
+                .HasOne(t => t.Annoucement)
+                .WithMany(a => a.Transaction)
+                .HasForeignKey(t => t.AnnouncementId);
+
+            //One-to-Many relation between Announcement and Repair
             modelBuilder.Entity<Repair>()
-                .HasOne(r => r.Vehicle)
-                .WithMany()
-                .HasForeignKey(r => r.VehicleId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .HasOne(r => r.Annoucement)
+                .WithMany(a => a.Repair)
+                .HasForeignKey(r => r.AnnouncementId);
         }
-    }
+    } 
 }

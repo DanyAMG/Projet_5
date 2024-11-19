@@ -8,12 +8,10 @@ namespace Projet_5.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; } //Primary Key
-        public float SellingPrice { get; set; }
-        [Column(TypeName = "DateTime2")]
-        DateTime DisponibilityDate { get; set; }
+        public float Amount { get; set; }
+
         [Column(TypeName = "DateTime2")] 
         public DateTime SellingDate { get; set; }
-        Boolean Selled { get; set; }
 
 
         //Foreigner Key
