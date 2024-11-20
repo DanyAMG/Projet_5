@@ -1,4 +1,6 @@
-﻿namespace Projet_5.Models.Services
+﻿using Projet_5.Models;
+
+namespace Projet_5.Services
 {
     public interface IVehicleService
     {

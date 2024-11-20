@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Projet_5.Models;
-using Projet_5.Models.Services;
+using Projet_5.Services;
 
 
 namespace Projet_5.Controllers

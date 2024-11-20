@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Projet_5.Data;
+using Projet_5.Models;
 
-namespace Projet_5.Models.Services
+namespace Projet_5.Services
 {
     public class VehicleService : IVehicleService
     {
@@ -57,7 +58,7 @@ namespace Projet_5.Models.Services
 
                 return true;
             }
-            
+
         }
 
         public async Task<bool> DeleteVehicleAsync(string vin)

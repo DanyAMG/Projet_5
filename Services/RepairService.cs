@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Projet_5.Data;
+using Projet_5.Models;
 
-namespace Projet_5.Models.Services
+namespace Projet_5.Services
 {
     public class RepairService : IRepairService
     {
@@ -9,7 +10,7 @@ namespace Projet_5.Models.Services
 
         public RepairService(ApplicationDbContext context)
         {
-        _context = context; 
+            _context = context;
         }
 
         public async Task<List<Repair>> GetRepairByVinAsync(string vin)
@@ -41,7 +42,7 @@ namespace Projet_5.Models.Services
                 .ToListAsync();
         }
 
-        public async Task<Repair>AddRepairAsync(Repair repair)
+        public async Task<Repair> AddRepairAsync(Repair repair)
         {
             _context.Repairs.Add(repair);
             await _context.SaveChangesAsync();
