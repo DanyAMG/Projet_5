@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Projet_5.Models;
-using Projet_5.Models.Services;
+using Projet_5.Services;
 
 namespace Projet_5.Controllers
 {
@@ -73,28 +73,6 @@ namespace Projet_5.Controllers
         {
             var deleted = await _vehicleService.DeleteVehicleAsync(vin);
             if(!deleted)
-            {
-                return NotFound();
-            }
-            return NoContent();
-        }
-
-        [HttpPatch("{vin}/available")]
-        public async Task<IActionResult> MarkVehicleAsAvailable(string vin)
-        {
-            var marked = await _vehicleService.MarkVehicleAsAvailable(vin);
-            if(!marked)
-            {
-                return NotFound();
-            }
-            return NoContent();
-        }
-
-        [HttpPatch("{vin}/available")]
-        public async Task<IActionResult> MarkVehicleAsUnavailable(string vin)
-        {
-            var unmarked = await _vehicleService.MarkVehicleAsUnavailable(vin);
-            if (!unmarked)
             {
                 return NotFound();
             }

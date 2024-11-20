@@ -1,8 +1,11 @@
-﻿namespace Projet_5.Models.Services
+﻿using Projet_5.Models;
+
+namespace Projet_5.Services
 {
     public interface IRepairService
     {
         Task<List<Repair>> GetRepairByVinAsync(string vin);
+        Task<List<Repair>> GetRepairByAnnouncementAsync(int announcementId);
         Task<Repair> AddRepairAsync(Repair repair);
         Task<Repair> UpdateRepairAsync(Repair repair);
         Task<bool> RemoveRepairAsync(int id);

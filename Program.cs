@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Projet_5.Data;
-using Projet_5.Models.Services;
+using Projet_5.Services;
 using System;
 
 
@@ -49,8 +49,8 @@ app.Run();
 
 //Save the services for dependancies injection
 builder.Services.AddScoped<IVehicleService, VehicleService>();
-builder.Services.AddScoped<IPurchaseService, PurchaseService>();
-builder.Services.AddScoped<ISellService, SellService>();
+builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<IAnnouncementService, AnnouncementService>();
 builder.Services.AddScoped<IRepairService, RepairService>();
 
 
