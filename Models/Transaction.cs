@@ -20,6 +20,6 @@ namespace Projet_5.Models
 
         //Foreigner Key to Announcement
         public int? AnnouncementId { get; set; }
-        public Announcement Annoucement { get; set; }
+        public Announcement Announcement { get; set; }
     }
 }

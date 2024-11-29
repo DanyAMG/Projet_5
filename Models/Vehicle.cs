@@ -8,20 +8,27 @@ namespace Projet_5.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public string VIN { get; set; } //vehicle Identification Number, unique number attributed to each vehicle
+        [Required]
+        [StringLength(17, MinimumLength = 17, ErrorMessage = "Le numéro VIN doit contenir exactement 17 caractères.")]
+        public string VIN { get; set; }
+
+        [Range(1990, 2100, ErrorMessage = "L'année doit être comprise entre 1990 et 2100.")]
         public int Year { get; set; }
+
+        [Required]
+        [StringLength(50, ErrorMessage = "La marque ne doit pas dépasser 50 caractères.")]
         public string Brand { get; set; }
+
+        [Required]
+        [StringLength(50, ErrorMessage = "Le modèle ne doit pas dépasser 50 caractères.")]
         public string Model { get; set; }
+
+        [StringLength(100, ErrorMessage = "La finition ne doit pas dépasser 100 caractères.")]
         public string Finition { get; set; }
 
-        
-        //Foreigner Key to repair
-        public ICollection<Repair> Repairs { get; set; } //one-to-many relation with Repair
 
-        //Foreigner Key to Transaction
-        public ICollection<Transaction> Transactions { get; set; } //one-to-many relation with Transaction
-
-        //Foreigner Key to Announcement
-        public ICollection<Announcement> Annoucements { get; set; } //one-to-many relation with Announcement
+        public ICollection<Announcement> Announcements { get; set; }
+        public ICollection<Transaction> Transactions { get; set; }
+        public ICollection<Repair> Repairs { get; set; }
     }
 }

@@ -5,7 +5,7 @@ using Projet_5.Services;
 
 namespace Projet_5.Controllers
 {
-    [Route("api/[controller")]
+    [Route("api/[controller]")]
     [ApiController]
 
     public class RepairController : ControllerBase

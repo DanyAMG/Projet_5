@@ -18,6 +18,12 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
+//Save the services for dependancies injection
+builder.Services.AddScoped<IVehicleService, VehicleService>();
+builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<IAnnouncementService, AnnouncementService>();
+builder.Services.AddScoped<IRepairService, RepairService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -47,10 +53,6 @@ app.MapRazorPages();
 app.Run();
 
 
-//Save the services for dependancies injection
-builder.Services.AddScoped<IVehicleService, VehicleService>();
-builder.Services.AddScoped<ITransactionService, TransactionService>();
-builder.Services.AddScoped<IAnnouncementService, AnnouncementService>();
-builder.Services.AddScoped<IRepairService, RepairService>();
+
 
 
