@@ -18,7 +18,7 @@ namespace Projet_5.Services
         {
             return await _context.Vehicles
                 .Include(v => v.Transactions)
-                .Include(v => v.Annoucements)
+                .Include(v => v.Announcements)
                 .Include(v => v.Repairs)
                 .FirstOrDefaultAsync(v => v.VIN == vin);
         }
@@ -27,7 +27,7 @@ namespace Projet_5.Services
         {
             return await _context.Vehicles
                 .Include(v => v.Transactions)
-                .Include(v => v.Annoucements)
+                .Include(v => v.Announcements)
                 .Include(v => v.Repairs)
                 .ToListAsync();
         }

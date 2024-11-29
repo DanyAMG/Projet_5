@@ -15,15 +15,8 @@ namespace Projet_5.Models
         public string PhotoPath { get; set; }
 
 
-        //Foreigner Key to Vehicle
-        public int VehicleId { get; set; }
-        public Vehicle Vehicle { get; set; }
-
-
-        //Foreigner Key to Transaction
-        public ICollection<Transaction> Transaction { get; set; }
-
-        //Foreigner Key to Repair
-        public ICollection<Repair> Repair { get; set; }
+        [ForeignKey(nameof(VehiculeAnnonce))]
+        public int VehiculeAnnonceId { get; set; }
+        public VehiculeAnnonce VehiculeAnnonce { get; set; }
     }
 }

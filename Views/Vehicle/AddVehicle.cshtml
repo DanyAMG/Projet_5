@@ -1,0 +1,48 @@
+﻿@using Projet_5.Models
+@using Projet_5.Controllers
+@model VehicleViewModel
+
+@{
+    ViewData["Title"] = "Ajouter un Véhicule";
+}
+
+<h2>@ViewData["Title"]</h2>
+<div asp-validation-summary="All" class="text-danger"></div>
+<form method="post">
+    <div class="mb-3">
+        <label for="vin" class="form-label">Numéro VIN</label>
+        <input type="text" class="form-control" id="vin" name="VIN" value="@Model.VIN" required />
+        <span asp-validation-for="VIN" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label for="brand" class="form-label">Marque</label>
+        <input type="text" class="form-control" id="brand" name="Brand" value="@Model.Brand" required />
+        <span asp-validation-for="Brand" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label for="model" class="form-label">Modèle</label>
+        <input type="text" class="form-control" id="model" name="Model" value="@Model.Model" required />
+        <span asp-validation-for="Model" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label for="year" class="form-label">Année</label>
+        <input type="number" class="form-control" id="year" name="Year" value="@Model.Year" required />
+        <span asp-validation-for="Year" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label for="finition" class="form-label">Finition</label>
+        <input type="text" class="form-control" id="finition" name="Finition" value="@Model?.Finition" />
+        <span asp-validation-for="Finition" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Ajouter</button>
+</form>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.13/dist/jquery.validate.unobtrusive.min.js"></script>
+}
