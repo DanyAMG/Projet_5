@@ -4,10 +4,11 @@ namespace Projet_5.Services
 {
     public interface IRepairService
     {
-        Task<List<Repair>> GetRepairByVinAsync(string vin);
+        Task<Repair> GetRepairByIdAsync(int id);
         Task<List<Repair>> GetRepairByAnnouncementAsync(int announcementId);
         Task<Repair> AddRepairAsync(Repair repair);
-        Task<Repair> UpdateRepairAsync(Repair repair);
-        Task<bool> RemoveRepairAsync(int id);
+        Task UpdateRepairAsync(Repair repair);
+        Task RemoveRepairAsync(int id);
+        Task<List<Repair>> GetRepairsByVehicleIdAsync(int vehicleId);
     }
 }

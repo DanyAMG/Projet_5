@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="utf-8" />
@@ -24,13 +28,27 @@
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Home" asp-action="Index">Accueil</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Vehicle" asp-action="AddVehicle">Ajouter une voiture</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-danger" asp-controller="Account" asp-action="Logout">Se déconnecter</a>
-                        </li>
+                            @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                            {
+                            <li><a href="/Vehicle/AddVehicle">Ajouter véhicule</a></li>
+                            }
+                            else
+                            {                     
+                            }
+                            @if (SignInManager.IsSignedIn(User))
+                            {
+                            <li class="nav-item">
+                                <form asp-controller="Account" asp-action="Logout" method="post" class="form-inline">
+                                    <button type="submit" class="btn btn-danger">Se déconnecter</button>
+                                </form>
+                            </li>
+                            }
+                            else
+                            {
+                            <li class="nav-item">
+                                <a class="nav-link text-primary" asp-controller="Account" asp-action="Login">Se connecter</a>
+                            </li>
+                            }
                     </ul>
                 </div>
             </div>

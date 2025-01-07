@@ -45,11 +45,10 @@ namespace Projet_5.Controllers
             {
                 return BadRequest();
             }
-            else
-            {
-                await _transactionService.AddTransactionAsync(transaction);
-                return CreatedAtAction(nameof(GetTransactionByVin), transaction);
-            }
+
+            var createdTransaction = await _transactionService.AddTransactionAsync(transaction.Amount, transaction.VehicleId);
+
+            return CreatedAtAction(nameof(GetTransactionByVin), new { id = createdTransaction.Id }, createdTransaction);
         }
 
         [HttpPut]

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Projet_5.Models;
+using Projet_5.Services;
 using System.Diagnostics;
 
 namespace Projet_5.Controllers
@@ -8,14 +9,18 @@ namespace Projet_5.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        private readonly IVehicleService _vehicleService;
+
+        public HomeController(ILogger<HomeController> logger, IVehicleService vehicleService)
         {
             _logger = logger;
+            _vehicleService = vehicleService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var vehicles = await _vehicleService.GetAllVehiclesAsync();
+            return View(vehicles);
         }
 
         public IActionResult Privacy()
@@ -28,5 +33,7 @@ namespace Projet_5.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+
     }
 }

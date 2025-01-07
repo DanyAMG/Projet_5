@@ -15,8 +15,8 @@ namespace Projet_5.Models
         public string PhotoPath { get; set; }
 
 
-        [ForeignKey(nameof(VehiculeAnnonce))]
-        public int VehiculeAnnonceId { get; set; }
+        [ForeignKey(nameof(Models.VehiculeAnnonce))]
+        public int VehicleAnnonceId { get; set; }
         public VehiculeAnnonce VehiculeAnnonce { get; set; }
     }
 }

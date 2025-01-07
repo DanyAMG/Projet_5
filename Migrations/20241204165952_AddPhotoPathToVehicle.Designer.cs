@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Projet_5.Data;
 
@@ -11,9 +12,11 @@ using Projet_5.Data;
 namespace Projet_5.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241204165952_AddPhotoPathToVehicle")]
+    partial class AddPhotoPathToVehicle
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,20 +50,6 @@ namespace Projet_5.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "d36f66a1-5aac-46fd-804c-3f8859c5193b",
-                            Name = "Employee",
-                            NormalizedName = "EMPLOYEE"
-                        },
-                        new
-                        {
-                            Id = "7ebd25ce-08d6-4e6b-8944-74eb0b3933f5",
-                            Name = "User",
-                            NormalizedName = "USER"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -260,10 +249,10 @@ namespace Projet_5.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("VehicleAnnonceId")
+                    b.Property<int?>("VehicleId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("VehicleId")
+                    b.Property<int>("VehiculeAnnonceId")
                         .HasColumnType("int");
 
                     b.Property<bool>("selled")
@@ -271,9 +260,9 @@ namespace Projet_5.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("VehicleAnnonceId");
-
                     b.HasIndex("VehicleId");
+
+                    b.HasIndex("VehiculeAnnonceId");
 
                     b.ToTable("Announcements");
                 });
@@ -458,15 +447,15 @@ namespace Projet_5.Migrations
 
             modelBuilder.Entity("Projet_5.Models.Announcement", b =>
                 {
-                    b.HasOne("Projet_5.Models.VehiculeAnnonce", "VehiculeAnnonce")
-                        .WithMany()
-                        .HasForeignKey("VehicleAnnonceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Projet_5.Models.Vehicle", null)
                         .WithMany("Announcements")
                         .HasForeignKey("VehicleId");
+
+                    b.HasOne("Projet_5.Models.VehiculeAnnonce", "VehiculeAnnonce")
+                        .WithMany()
+                        .HasForeignKey("VehiculeAnnonceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("VehiculeAnnonce");
                 });

@@ -24,7 +24,7 @@ namespace Projet_5.Services
             {
                 var transaction = await _context.Transactions
                     .Include(t => t.Vehicle)
-                    .FirstOrDefaultAsync(t => t.Id == id);
+                    .FirstOrDefaultAsync(t => t.VehicleId == id);
 
                 return transaction;
             }
@@ -37,9 +37,16 @@ namespace Projet_5.Services
                 .ToListAsync();
         }
 
-        public async Task<Transaction> AddTransactionAsync(Transaction transaction)
+        public async Task<Transaction> AddTransactionAsync(float amount, int vehicleId)
         {
-            _context.Set<Transaction>().Add(transaction);
+            var transaction = new Transaction
+            {
+                Amount = amount,
+                TransactionDate = DateTime.Now,
+                VehicleId = vehicleId
+            };
+
+            _context.Transactions.Add(transaction);
             await _context.SaveChangesAsync();
             return transaction;
         }
@@ -79,5 +86,6 @@ namespace Projet_5.Services
                 return true;
             }
         }
+
     }
 }

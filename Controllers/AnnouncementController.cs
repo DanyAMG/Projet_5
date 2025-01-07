@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using Projet_5.Models;
 using Projet_5.Services;
 
@@ -7,13 +8,20 @@ namespace Projet_5.Controllers
     [Route("api/[controller]")]
     [ApiController]
 
-    public class AnnouncementController : ControllerBase
+    public class AnnouncementController : Controller
     {
         private readonly IAnnouncementService _announcementService;
+        private readonly IVehicleService _vehicleService;
+        private readonly IRepairService _repairService;
+        private readonly ITransactionService _transactionService;
 
-        public AnnouncementController(IAnnouncementService announcementService)
+        public AnnouncementController(IAnnouncementService announcementService,IVehicleService vehicleService, IRepairService repairService, ITransactionService transactionService)
         {
             _announcementService = announcementService;
+            _vehicleService = vehicleService;
+            _repairService = repairService;
+            _transactionService = transactionService;
+
         }
 
         [HttpGet]
@@ -131,6 +139,33 @@ namespace Projet_5.Controllers
             }
 
             return Ok();
+        }
+
+        [HttpGet("Details")]
+        public async Task<IActionResult> Details(int id)
+        {
+            if (id <= 0)
+            {
+                return NotFound();
+            }
+
+            var vehicle = await _vehicleService.GetVehicleByIdAsync(id);
+            if (vehicle == null)
+            {
+                return NotFound();
+            }
+
+            var repair = await _repairService.
+                GetRepairsByVehicleIdAsync(id);
+            var transaction = await _transactionService.GetTransactionsByIdAsync(id);
+
+            var model = new VehicleDetailsViewModel
+            {
+                Vehicle = vehicle,
+                Repairs = repair,
+                Transaction = transaction
+            };
+            return View(model);
         }
     }
 }

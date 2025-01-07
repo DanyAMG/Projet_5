@@ -1,26 +1,29 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Projet_5.Models;
 using Projet_5.Services;
-
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace Projet_5.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    [Route("[controller]")]
 
-    public class RepairController : ControllerBase
+    public class RepairController : Controller
     {
         private readonly IRepairService _repairService;
-
-        public RepairController(IRepairService repairService)
+        private readonly IVehicleService _vehicleService;
+        private readonly IAnnouncementService _announcementService;
+        public RepairController(IRepairService repairService, IVehicleService vehicleService, IAnnouncementService announcementService)
         {
             _repairService = repairService;
+            _vehicleService = vehicleService;
+            _announcementService = announcementService;
         }
 
         [HttpGet("vin")]
-        public async Task<IActionResult> GetRepairsByVin(string vin)
+        public async Task<IActionResult> GetRepairsByIdAsync(int id)
         {
-            var repair = await _repairService.GetRepairByVinAsync(vin);
+            var repair = await _repairService.GetRepairByIdAsync(id);
             if(repair == null)
             {
                 return NotFound();
@@ -31,30 +34,132 @@ namespace Projet_5.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("/Repair/UpdateRepair")]
         public async Task<IActionResult> UpdateRepair(Repair repair)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
-            var updated = await _repairService.UpdateRepairAsync(repair);
-            if (updated == null)
-            {
-                return NotFound();
-            }
+
+            await _repairService.UpdateRepairAsync(repair);
+            
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRepaire(int id)
+        //[HttpDelete("{id}")]
+        [HttpPost("/Repair/DeleteRepair")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteRepaire(int repairId)
         {
-            var deleted = await _repairService.RemoveRepairAsync(id);
-            if(!deleted)
+            var repair = await _repairService.GetRepairByIdAsync(repairId);
+
+            if (repair == null)
             {
                 return NotFound();
             }
-            return NoContent();
+
+            var vehicleId = repair.VehicleId;
+
+            await _repairService.RemoveRepairAsync(repairId);
+
+            return RedirectToAction("Details", "Announcement", new { id = vehicleId });
         }
+
+        [HttpGet("/Repair/AddRepair")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AddRepair(int vehicleId)
+        {
+            if (vehicleId <= 0)
+            {
+                return BadRequest("ID de véhicule invalide.");
+            }
+
+            var vehicle = await _vehicleService.GetVehicleByIdAsync(vehicleId);
+
+            if (vehicle == null)
+            {
+                return NotFound("Véhicule introuvable.");
+            }
+
+            var model = new RepairViewModel { VehicleId = vehicleId };
+
+            return View(model);
+        }
+
+        [HttpPost("/Repair/AddRepair")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AddRepair(RepairViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var vehicle = await _vehicleService.GetVehicleByIdAsync(model.VehicleId);
+
+            if (vehicle == null)
+            {
+                ModelState.AddModelError("", "Le véhicule spécifié n'existe pas.");
+                return View(model);
+            }
+
+            var repair = new Repair
+            {
+                Reparation = model.Reparation,
+                Cost = model.Cost,
+                VehicleId = model.VehicleId
+            };
+
+            await _repairService.AddRepairAsync(repair);
+
+            return RedirectToAction("RepairAdded", new { vehicleId = model.VehicleId });
+        }
+
+        [HttpGet("/Repair/RepairAdded")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult RepairAdded(int vehicleId)
+        {
+            if (vehicleId <= 0)
+            {
+                return BadRequest("ID de véhicule invalide.");
+            }
+
+            var vehicle = _vehicleService.GetVehicleByIdAsync(vehicleId);
+
+            if (vehicle == null)
+            {
+                return NotFound("Véhicule introuvable.");
+            }
+
+            ViewBag.VehicleId = vehicleId;
+
+            return View(vehicle);
+        }
+
+        [HttpGet("/Repair/Edit")]
+        public async Task<IActionResult> EditRepair(int id)
+        {
+            var repair = await _repairService.GetRepairByIdAsync(id);
+            if (repair == null)
+            {
+                return NotFound();
+            }
+            return View(repair);
+        }
+
+        [HttpPost("/Repair/Edit")]
+        public async Task<IActionResult> EditRepair(Repair repair)
+        {
+            if (repair.VehicleId <= 0 || repair.VehicleId <=0)
+            {
+                return BadRequest("L'ID du véhicule est invalide.");
+            }
+            await _repairService.UpdateRepairAsync(repair);
+
+            return RedirectToAction("Details", "Announcement", new { id = repair.VehicleId });
+        }
+
+        
     }
 }

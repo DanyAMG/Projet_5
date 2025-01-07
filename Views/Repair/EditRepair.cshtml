@@ -1,0 +1,27 @@
+﻿@model Projet_5.Models.Repair
+
+@{
+    ViewData["Title"] = "Modifier la réparation";
+}
+
+<h2>Modifier la réparation</h2>
+
+<form asp-action="EditRepair" asp-controller="Repair" method="post">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="VehicleId" />
+
+    <div class="form-group">
+        <label asp-for="Reparation"></label>
+        <input type="text" asp-for="Reparation" class="form-control" />
+        <span asp-validation-for="Reparation" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Cost"></label>
+        <input type="number" asp-for="Cost" class="form-control" />
+        <span asp-validation-for="Cost" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Sauvegarder</button>
+    <a asp-action="Details" asp-controller="Announcement" asp-route-id="@Model.VehicleId" class="btn btn-secondary">Annuler</a>
+</form>
