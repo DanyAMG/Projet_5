@@ -1,0 +1,11 @@
+﻿@{
+    ViewData["Title"] = "Réparation ajoutée";
+}
+
+<h2>Réparation ajoutée avec succès !</h2>
+<p>La réparation a bien été enregistrée dans le système.</p>
+
+<div>
+    <a asp-action="AddRepair" asp-route-vehicleId="@ViewBag.VehicleId" class="btn btn-primary">Ajouter une autre réparation</a>
+    <a href="@Url.Action("Index", "Home")" class="btn btn-secondary">Retour à l'accueil</a>
+</div>

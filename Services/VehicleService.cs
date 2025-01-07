@@ -14,13 +14,13 @@ namespace Projet_5.Services
             _context = context;
         }
 
-        public async Task<Vehicle> GetVehicleByVinAsync(string vin)
+        public async Task<Vehicle> GetVehicleByIdAsync(int id)
         {
             return await _context.Vehicles
                 .Include(v => v.Transactions)
                 .Include(v => v.Announcements)
                 .Include(v => v.Repairs)
-                .FirstOrDefaultAsync(v => v.VIN == vin);
+                .FirstOrDefaultAsync(v => v.Id == id);
         }
 
         public async Task<List<Vehicle>> GetAllVehiclesAsync()
@@ -39,9 +39,9 @@ namespace Projet_5.Services
             return vehicle;
         }
 
-        public async Task<bool> UpdateVehicleAsync(string vin, Vehicle vehicle)
+        public async Task<bool> UpdateVehicleAsync(int id, Vehicle vehicle)
         {
-            var existingVehicle = await GetVehicleByVinAsync(vin);
+            var existingVehicle = await GetVehicleByIdAsync(id);
 
             if (existingVehicle == null)
             {
@@ -61,9 +61,9 @@ namespace Projet_5.Services
 
         }
 
-        public async Task<bool> DeleteVehicleAsync(string vin)
+        public async Task<bool> DeleteVehicleAsync(int id)
         {
-            var vehicle = await GetVehicleByVinAsync(vin);
+            var vehicle = await GetVehicleByIdAsync(id);
             if (vehicle == null)
             {
                 return false;

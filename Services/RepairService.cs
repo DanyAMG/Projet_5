@@ -13,21 +13,23 @@ namespace Projet_5.Services
             _context = context;
         }
 
-        public async Task<List<Repair>> GetRepairByVinAsync(string vin)
+        public async Task<Repair> GetRepairByIdAsync(int id)
         {
-            if (string.IsNullOrEmpty(vin))
+            if (id <= 0)
             {
-                throw new ArgumentException("VIN cannot be null or empty.", nameof(vin));
+                throw new ArgumentException("Repair ID must be greater than 0.", nameof(id));
             }
-            else
-            {
-                var repairs = await _context.Set<Repair>()
-                                .Include(r => r.Vehicle)
-                                .Where(r => r.Vehicle.VIN == vin)
-                                .ToListAsync();
 
-                return repairs;
+            var repair = await _context.Set<Repair>()
+                            .Where(r => r.Id == id)
+                            .FirstOrDefaultAsync();
+
+            if (repair == null)
+            {
+                throw new InvalidOperationException($"No repair found with ID {id}");
             }
+
+            return repair;
         }
 
         public async Task<List<Repair>> GetRepairByAnnouncementAsync(int announcementId)
@@ -49,27 +51,43 @@ namespace Projet_5.Services
             return repair;
         }
 
-        public async Task<Repair> UpdateRepairAsync(Repair repair)
+        public async Task UpdateRepairAsync(Repair repair)
         {
-            _context.Repairs.Update(repair);
-            await _context.SaveChangesAsync();
-            return repair;
+            var existingRepair = await _context.Repairs.FindAsync(repair.Id);
+
+            if (existingRepair != null)
+            {
+                existingRepair.Reparation = repair.Reparation;
+                existingRepair.Cost = repair.Cost;
+
+                _context.Repairs.Update(existingRepair);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new Exception("La réparation n'existe pas dans la base de données.");
+            }
         }
 
-        public async Task<bool> RemoveRepairAsync(int id)
+        public async Task RemoveRepairAsync(int id)
         {
             var repair = await _context.Repairs.FindAsync(id);
             if (repair != null)
             {
                 _context.Repairs.Remove(repair);
-                await _context.SaveChangesAsync();
-
-                return true;
+                await _context.SaveChangesAsync(); 
             }
             else
             {
-                return false;
+                throw new Exception("La réparation n'existe pas dans la base de données.");
             }
+        }
+
+        public async Task<List<Repair>> GetRepairsByVehicleIdAsync(int vehicleId)
+        {
+            return await _context.Repairs
+                                 .Where(r => r.VehicleId == vehicleId)
+                                 .ToListAsync();
         }
     }
 }

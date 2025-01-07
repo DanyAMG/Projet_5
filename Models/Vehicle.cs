@@ -8,10 +8,12 @@ namespace Projet_5.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+
         [Required]
         [StringLength(17, MinimumLength = 17, ErrorMessage = "Le numéro VIN doit contenir exactement 17 caractères.")]
         public string VIN { get; set; }
 
+        [Required]
         [Range(1990, 2100, ErrorMessage = "L'année doit être comprise entre 1990 et 2100.")]
         public int Year { get; set; }
 
@@ -25,6 +27,8 @@ namespace Projet_5.Models
 
         [StringLength(100, ErrorMessage = "La finition ne doit pas dépasser 100 caractères.")]
         public string Finition { get; set; }
+
+        public string PhotoPath { get; set; }
 
 
         public ICollection<Announcement> Announcements { get; set; }

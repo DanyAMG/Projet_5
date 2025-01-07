@@ -1,8 +1,38 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@model IEnumerable<Projet_5.Models.Vehicle>
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Liste des véhicules</h2>
+    <div class="row">
+        @foreach (var vehicle in Model)
+        {
+           
+            <div class="col-md-4 mb-4">
+                <a asp-controller="Announcement" asp-action="Details" asp-route-id="@vehicle.Id" class="card text-decoration-none" style="color: inherit;">
+                <div class="card shadow-sm">
+                    <div class="row no-gutters">
+                        
+                        <div class="col-5">
+                            <img src="@vehicle.PhotoPath" alt="@vehicle.Brand @vehicle.Model"
+                                 class="img-fluid w-500 h-500 object-fit-cover">
+                        </div>
+                        
+                        <div class="col-7">
+                            <div class="card-body">
+                                <h5 class="card-title">@vehicle.Brand @vehicle.Model</h5>
+                                <p class="card-text">
+                                    <strong>Année :</strong> @vehicle.Year<br />
+                                    <strong>Finition :</strong> @vehicle.Finition
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </a>
+            </div>
+            
+        }
+    </div>
 </div>

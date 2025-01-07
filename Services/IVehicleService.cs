@@ -4,10 +4,10 @@ namespace Projet_5.Services
 {
     public interface IVehicleService
     {
-        Task<Vehicle> GetVehicleByVinAsync(string vin);
+        Task<Vehicle> GetVehicleByIdAsync(int id);
         Task<List<Vehicle>> GetAllVehiclesAsync();
         Task<Vehicle> AddVehicleAsync(Vehicle vehicle);
-        Task<bool> UpdateVehicleAsync(string vin, Vehicle vehicle);
-        Task<bool> DeleteVehicleAsync(string vin);
+        Task<bool> UpdateVehicleAsync(int id, Vehicle vehicle);
+        Task<bool> DeleteVehicleAsync(int id);
     }
 }
