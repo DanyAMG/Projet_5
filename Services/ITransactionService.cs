@@ -6,7 +6,7 @@ namespace Projet_5.Services
     {
         Task<Transaction> GetTransactionsByIdAsync(int id);
         Task<List<Transaction>> GetAllTransactionAsync();
-        Task<Transaction> AddTransactionAsync(float amount, int vehicleId);
+        Task<Transaction> AddTransactionAsync(float amount, int vehicleId, int advertisementId);
         Task<bool> UpdateTransactionAsync(Transaction transaction, int id);
         Task<bool> DeleteTransactionAsync(int id);
     }

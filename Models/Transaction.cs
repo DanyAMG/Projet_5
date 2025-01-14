@@ -18,8 +18,8 @@ namespace Projet_5.Models
         public int VehicleId { get; set; }
         public Vehicle Vehicle { get; set; }
 
-        //Foreigner Key to Announcement
-        public int? AnnouncementId { get; set; }
-        public Announcement Announcement { get; set; }
+        //Foreigner Key to Advertisement
+        public int AdvertisementId { get; set; }
+        public Advertisement Advertisement { get; set; }
     }
 }

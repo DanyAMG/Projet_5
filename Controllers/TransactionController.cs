@@ -38,18 +38,18 @@ namespace Projet_5.Controllers
             return Ok(transactions);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AddTransaction([FromBody] Transaction transaction)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
+        //[HttpPost]
+        //public async Task<IActionResult> AddTransaction([FromBody] Transaction transaction)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            var createdTransaction = await _transactionService.AddTransactionAsync(transaction.Amount, transaction.VehicleId);
+        //    var createdTransaction = await _transactionService.AddTransactionAsync(transaction.Amount, transaction.VehicleId);
 
-            return CreatedAtAction(nameof(GetTransactionByVin), new { id = createdTransaction.Id }, createdTransaction);
-        }
+       //     return CreatedAtAction(nameof(GetTransactionByVin), new { id = createdTransaction.Id }, createdTransaction);
+       // }
 
         [HttpPut]
         public async Task<IActionResult> UpdateTransaction(int id, [FromBody] Transaction updatedTransaction)

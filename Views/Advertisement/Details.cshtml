@@ -50,25 +50,47 @@
                 @if (Model.Repairs.Any())
                 {
                     <h4>Réparations effectuées</h4>
-                    <ul>
+                    <table class="repair">
                         @foreach (var repair in Model.Repairs)
                         {
-                            <li>
-                                @repair.Reparation - @repair.Cost €
-                                <a href="@Url.Action("EditRepair", "Repair", new { id = repair.Id })" class="btn btn-primary btn-sm">Modifier</a>
+                            <tr>
+                        <td>@repair.Reparation - @repair.Cost €</td>
+                                <td><a href="@Url.Action("EditRepair", "Repair", new { id = repair.Id })" class="btn btn-primary btn-sm">Modifier</a>
                                 <form asp-action="DeleteRepair" asp-controller="Repair" method="post" style="display:inline;">
                                     <input type="hidden" name="repairId" value="@repair.Id" />
                                     <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
-                                </form>
-                            </li>
+                            </form>
+                        </td>
+                            </tr>
                         }
-                    </ul>
+                    </table>
+
+            
+           
                 }
 
-                <div>
-                <a href="@Url.Action("EditCar", "Vehicle", new { id = Model.Vehicle.Id })" class="btn btn-primary">Modifier</a>
-                <a href="@Url.Action("AddRepair", "Repair", new { vehicleId = Model.Vehicle.Id })" class="btn btn-secondary">Ajouter une réparation</a>
-                </div>
+        <h4>Disponibilité</h4>
+        <form asp-action="SetDisponibility" asp-controller="Advertisement" method="post">
+            <input type="hidden" name="vehicleId" value="@Model.Vehicle.Id" />
+            <label>
+                <strong>Disponible à la vente :</strong>
+                <input
+                    type="checkbox"
+                    name="isAvailableForSale"
+                    value="true" @(Model.Advertisement?.Disponibility == true ? "checked" : "")
+                    onchange="this.form.submit();" />
+            </label>
+        </form>
+        <p>
+            <strong>Date de disponibilité :</strong>
+            @(Model.Advertisement?.DisponibilityDate.ToShortDateString() ?? "N/A")
+        </p>
+
+        <div>
+            <a href="@Url.Action("EditCar", "Vehicle", new { id = Model.Vehicle.Id })" class="btn btn-primary">Modifier</a>
+            <a href="@Url.Action("AddRepair", "Repair", new { vehicleId = Model.Vehicle.Id })" class="btn btn-secondary">Ajouter une réparation</a>
+        </div>
+                
             }
 
     <a href="@Url.Action("Index", "Home")" class="btn btn-secondary">Retour à l'accueil</a>

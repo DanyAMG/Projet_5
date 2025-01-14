@@ -12,12 +12,12 @@ namespace Projet_5.Controllers
     {
         private readonly IRepairService _repairService;
         private readonly IVehicleService _vehicleService;
-        private readonly IAnnouncementService _announcementService;
-        public RepairController(IRepairService repairService, IVehicleService vehicleService, IAnnouncementService announcementService)
+        private readonly IAdvertisementService _advertisementService;
+        public RepairController(IRepairService repairService, IVehicleService vehicleService, IAdvertisementService advertisementService)
         {
             _repairService = repairService;
             _vehicleService = vehicleService;
-            _announcementService = announcementService;
+            _advertisementService = advertisementService;
         }
 
         [HttpGet("vin")]
@@ -63,7 +63,7 @@ namespace Projet_5.Controllers
 
             await _repairService.RemoveRepairAsync(repairId);
 
-            return RedirectToAction("Details", "Announcement", new { id = vehicleId });
+            return RedirectToAction("Details", "Advertisement", new { id = vehicleId });
         }
 
         [HttpGet("/Repair/AddRepair")]
@@ -89,7 +89,7 @@ namespace Projet_5.Controllers
 
         [HttpPost("/Repair/AddRepair")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> AddRepair(RepairViewModel model)
+        public async Task<IActionResult> AddRepair(RepairViewModel model, int vehicleId)
         {
             if (!ModelState.IsValid)
             {
@@ -111,7 +111,7 @@ namespace Projet_5.Controllers
                 VehicleId = model.VehicleId
             };
 
-            await _repairService.AddRepairAsync(repair);
+            await _repairService.AddRepairAsync(vehicleId, repair);
 
             return RedirectToAction("RepairAdded", new { vehicleId = model.VehicleId });
         }
@@ -157,7 +157,7 @@ namespace Projet_5.Controllers
             }
             await _repairService.UpdateRepairAsync(repair);
 
-            return RedirectToAction("Details", "Announcement", new { id = repair.VehicleId });
+            return RedirectToAction("Details", "Advertisement", new { id = repair.VehicleId });
         }
 
         

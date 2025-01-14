@@ -32,22 +32,39 @@ namespace Projet_5.Services
             return repair;
         }
 
-        public async Task<List<Repair>> GetRepairByAnnouncementAsync(int announcementId)
+        public async Task<List<Repair>> GetRepairByAdvertisementAsync(int advertisementId)
         {
-            if (announcementId <= 0)
+            if (advertisementId <= 0)
             {
-                throw new ArgumentException("Announcement ID must be greater than 0", nameof(announcementId));
+                throw new ArgumentException("Advertisement ID must be greater than 0", nameof(advertisementId));
             }
             return await _context.Set<Repair>()
                 .Include(r => r.Vehicle)
-                .Where(r => r.Annoucement.Id == announcementId)
+                .Where(r => r.Advertisements.Id == advertisementId)
                 .ToListAsync();
         }
 
-        public async Task<Repair> AddRepairAsync(Repair repair)
+        public async Task<Repair> AddRepairAsync(int vehicleId, Repair repair)
         {
+            var vehicle = await _context.Vehicles
+                .Include(v => v.Advertisements)
+                .FirstOrDefaultAsync(v => v.Id == vehicleId);
+
+            if (vehicle == null)
+            {
+                throw new Exception("Vehicule non trouvé.");
+            }
+
+            if (vehicle.Advertisements == null)
+            {
+                throw new Exception("Annonce non trouvée");
+            }
+
+            repair.Advertisements = vehicle.Advertisements.FirstOrDefault();
+
             _context.Repairs.Add(repair);
             await _context.SaveChangesAsync();
+
             return repair;
         }
 

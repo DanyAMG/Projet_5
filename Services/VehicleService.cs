@@ -18,7 +18,7 @@ namespace Projet_5.Services
         {
             return await _context.Vehicles
                 .Include(v => v.Transactions)
-                .Include(v => v.Announcements)
+                .Include(v => v.Advertisements)
                 .Include(v => v.Repairs)
                 .FirstOrDefaultAsync(v => v.Id == id);
         }
@@ -27,7 +27,7 @@ namespace Projet_5.Services
         {
             return await _context.Vehicles
                 .Include(v => v.Transactions)
-                .Include(v => v.Announcements)
+                .Include(v => v.Advertisements)
                 .Include(v => v.Repairs)
                 .ToListAsync();
         }
@@ -75,6 +75,15 @@ namespace Projet_5.Services
 
                 return true;
             }
+        }
+
+        public async Task<Vehicle> GetVehicleWithDetailsAsync(int id)
+        {
+            return await _context.Vehicles
+                .Include(v => v.Advertisements)
+                .Include(v => v.Repairs)
+                .Include(v => v.Transactions)
+                .FirstOrDefaultAsync(v => v.Id == id);
         }
     }
 }

@@ -31,7 +31,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 //Save the services for dependancies injection
 builder.Services.AddScoped<IVehicleService, VehicleService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
-builder.Services.AddScoped<IAnnouncementService, AnnouncementService>();
+builder.Services.AddScoped<IAdvertisementService, AdvertisementService>();
 builder.Services.AddScoped<IRepairService, RepairService>();
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();

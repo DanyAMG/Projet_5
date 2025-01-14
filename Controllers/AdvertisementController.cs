@@ -8,16 +8,16 @@ namespace Projet_5.Controllers
     [Route("api/[controller]")]
     [ApiController]
 
-    public class AnnouncementController : Controller
+    public class AdvertisementController : Controller
     {
-        private readonly IAnnouncementService _announcementService;
+        private readonly IAdvertisementService _advertisementService;
         private readonly IVehicleService _vehicleService;
         private readonly IRepairService _repairService;
         private readonly ITransactionService _transactionService;
 
-        public AnnouncementController(IAnnouncementService announcementService,IVehicleService vehicleService, IRepairService repairService, ITransactionService transactionService)
+        public AdvertisementController(IAdvertisementService advertisementService,IVehicleService vehicleService, IRepairService repairService, ITransactionService transactionService)
         {
-            _announcementService = announcementService;
+            _advertisementService = advertisementService;
             _vehicleService = vehicleService;
             _repairService = repairService;
             _transactionService = transactionService;
@@ -25,39 +25,27 @@ namespace Projet_5.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllAnnouncements()
+        public async Task<IActionResult> GetAllAdvertisements()
         {
-            var announcements = await _announcementService.GetAllAnnouncementsAsync();
-            return Ok(announcements);
+            var advertisements = await _advertisementService.GetAllAdvertisementsAsync();
+            return Ok(advertisements);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetAnnouncementById(int id)
+        public async Task<IActionResult> GetAdvertisementById(int id)
         {
-            var announcement = await _announcementService.GetAnnouncementByIdAsync(id);
-            if (announcement == null)
+            var advertisement = await _advertisementService.GetAdvertisementByIdAsync(id);
+            if (advertisement == null)
             {
                 return NotFound();
             }
-            return Ok(announcement);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreateAnnouncement([FromBody] Announcement newAnnouncement)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var createdAnnouncement = await _announcementService.AddAnnouncementAsync(newAnnouncement);
-            return CreatedAtAction(nameof(GetAnnouncementById), new { id = createdAnnouncement.Id }, createdAnnouncement);
+            return Ok(advertisement);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAnnouncement(int id, [FromBody] Announcement updatedAnnouncement)
+        public async Task<IActionResult> UpdateAdvertisement(int id, [FromBody] Advertisement updatedAdvertisement)
         {
-            if (id != updatedAnnouncement.Id)
+            if (id != updatedAdvertisement.Id)
             {
                 return BadRequest();
             }
@@ -67,7 +55,7 @@ namespace Projet_5.Controllers
                 return BadRequest(ModelState);
             }
 
-            var success = await _announcementService.UpdateAnnouncementAsync(updatedAnnouncement);
+            var success = await _advertisementService.UpdateAdvertisementAsync(updatedAdvertisement);
             if (!success)
             {
                 return NotFound();
@@ -77,9 +65,9 @@ namespace Projet_5.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAnnouncement(int id)
+        public async Task<IActionResult> DeleteAdvertisement(int id)
         {
-            var success = await _announcementService.DeleteAnnouncementAsync(id);
+            var success = await _advertisementService.DeleteAdvertisementAsync(id);
             if (!success)
             {
                 return NotFound();
@@ -88,22 +76,25 @@ namespace Projet_5.Controllers
             return NoContent();
         }
 
-        [HttpPut("disponibility")]
-        public async Task<IActionResult> SetDisponibility([FromQuery] bool disponibility, [FromQuery] bool selled)
+        [HttpPost("disponibility")]
+        public async Task<IActionResult> SetDisponibility(int vehicleId, bool disponibility)
         {
-            var success = await _announcementService.SetDisponibilityAsync(disponibility, selled);
-            if (!success)
+            try
             {
-                return NotFound();
+                await _advertisementService.SetDisponibilityAsync(vehicleId, disponibility);
+                return RedirectToAction("Details", new { id = vehicleId });
             }
-
-            return Ok();
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction("Details", new { id = vehicleId });
+            }
         }
 
         [HttpDelete("archive")]
-        public IActionResult ArchiveAnnouncement([FromQuery] bool selled)
+        public IActionResult ArchiveAdvertisement([FromQuery] bool selled)
         {
-            _announcementService.ArchiveAnnoucement(selled);
+            _advertisementService.ArchiveAnnoucement(selled);
             return Ok();
         }
 
@@ -115,7 +106,7 @@ namespace Projet_5.Controllers
                 return BadRequest();
             }
 
-            var success = await _announcementService.UpdateDescriptionAsync(id, description);
+            var success = await _advertisementService.UpdateDescriptionAsync(id, description);
             if (!success)
             {
                 return NotFound();
@@ -132,7 +123,7 @@ namespace Projet_5.Controllers
                 return BadRequest();
             }
 
-            var success = await _announcementService.UpdatePhotoAsync(id, photo);
+            var success = await _advertisementService.UpdatePhotoAsync(id, photo);
             if (!success)
             {
                 return NotFound();
@@ -150,21 +141,24 @@ namespace Projet_5.Controllers
             }
 
             var vehicle = await _vehicleService.GetVehicleByIdAsync(id);
+
             if (vehicle == null)
             {
                 return NotFound();
             }
 
-            var repair = await _repairService.
-                GetRepairsByVehicleIdAsync(id);
+            var repair = await _repairService.GetRepairsByVehicleIdAsync(id);
             var transaction = await _transactionService.GetTransactionsByIdAsync(id);
+            var advertisement = await _advertisementService.GetAdvertisementByVehicleIdAsync(id);
 
             var model = new VehicleDetailsViewModel
             {
                 Vehicle = vehicle,
                 Repairs = repair,
-                Transaction = transaction
+                Transaction = transaction,
+                Advertisement = advertisement
             };
+
             return View(model);
         }
     }

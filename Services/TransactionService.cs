@@ -37,13 +37,14 @@ namespace Projet_5.Services
                 .ToListAsync();
         }
 
-        public async Task<Transaction> AddTransactionAsync(float amount, int vehicleId)
+        public async Task<Transaction> AddTransactionAsync(float amount, int vehicleId, int advertisementId)
         {
             var transaction = new Transaction
             {
                 Amount = amount,
                 TransactionDate = DateTime.Now,
-                VehicleId = vehicleId
+                VehicleId = vehicleId,
+                AdvertisementId = advertisementId
             };
 
             _context.Transactions.Add(transaction);
