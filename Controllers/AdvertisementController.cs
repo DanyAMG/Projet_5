@@ -76,8 +76,9 @@ namespace Projet_5.Controllers
             return NoContent();
         }
 
-        [HttpPost("disponibility")]
-        public async Task<IActionResult> SetDisponibility(int vehicleId, bool disponibility)
+        [HttpPost]
+        [Route("SetDisponibility")]
+        public async Task<IActionResult> SetDisponibility([FromForm] int vehicleId, [FromForm] bool disponibility)
         {
             try
             {
@@ -87,7 +88,7 @@ namespace Projet_5.Controllers
             catch (Exception ex)
             {
                 TempData["Error"] = ex.Message;
-                return RedirectToAction("Details", new { id = vehicleId });
+                return RedirectToAction("Details", "Details", new { id = vehicleId });
             }
         }
 
@@ -148,18 +149,52 @@ namespace Projet_5.Controllers
             }
 
             var repair = await _repairService.GetRepairsByVehicleIdAsync(id);
-            var transaction = await _transactionService.GetTransactionsByIdAsync(id);
+            var buyingTransaction = await _transactionService.GetBuyingTransactionByVehicleIdAsync(id);
+            var sellingPrice = await _advertisementService.CalculateSellingPriceAsync(id);
             var advertisement = await _advertisementService.GetAdvertisementByVehicleIdAsync(id);
 
             var model = new VehicleDetailsViewModel
             {
                 Vehicle = vehicle,
                 Repairs = repair,
-                Transaction = transaction,
+                BuyingTransaction = buyingTransaction,
+                SellingPrice = sellingPrice,
                 Advertisement = advertisement
             };
 
             return View(model);
+        }
+
+        [HttpPost]
+        [Route("SetSelled")]
+        public async Task<IActionResult> SetSelled([FromForm] int vehicleId, [FromForm] bool selled)
+        {
+            try
+            {
+                await _advertisementService.SetSelledAsync(vehicleId, selled);
+                return RedirectToAction("Details", new { id = vehicleId });
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction("Details", "Details", new { id = vehicleId });
+            }
+        }
+
+        [HttpPost]
+        [Route("CalculateSellingPrice")]
+        public async Task<IActionResult> CalculateSellingPrice(int vehicleId, int advertisementId)
+        {
+            try
+            {
+                var sellingPrice = await _advertisementService.CalculateSellingPriceAsync(vehicleId);
+
+                return RedirectToAction("Details", new { id = vehicleId });
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Details", new { id = vehicleId });
+            }
         }
     }
 }

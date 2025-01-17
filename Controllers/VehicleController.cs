@@ -103,29 +103,9 @@ namespace Projet_5.Controllers
                 Description = "this is a vehicle",
             };
 
-            if (model.Photo != null && model.Photo.Length > 0)
-            {
-                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
-
-                if (!Directory.Exists(uploadsFolder))
-                {
-                    Directory.CreateDirectory(uploadsFolder);
-                }
-
-                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(model.Photo.FileName);
-                var filePath = Path.Combine(uploadsFolder, fileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await model.Photo.CopyToAsync(stream);
-                }
-
-                advertisement.PhotoPath = "/uploads/" + fileName;
-            }
-
             await _advertisementService.AddAdvertisementAsync(advertisement, vehicle);
-
-            await _transactionService.AddTransactionAsync(model.Price, vehicle.Id, advertisement.Id);
+            bool transactiontype = false;
+            await _transactionService.AddTransactionAsync(model.Price, vehicle.Id, advertisement.Id, transactiontype);
 
             return RedirectToAction("VehicleAdded");
         }
@@ -171,13 +151,20 @@ namespace Projet_5.Controllers
         public async Task<IActionResult> EditCar(int id)
         {
             var vehicle = await _vehicleService.GetVehicleByIdAsync(id);
+
+            var advertisement = await _advertisementService.GetAdvertisementByVehicleIdAsync(id);
+
+            var transaction = await _transactionService.GetBuyingTransactionByVehicleIdAsync(id);
+
             if (vehicle == null)
             {
                 return NotFound();
             }
 
-            var transaction = await _transactionService.GetTransactionsByIdAsync(id);
-
+            if (advertisement == null)
+            {
+                return NotFound();
+            }
             var model = new VehicleViewModel
             {
                 VIN = vehicle.VIN,
@@ -185,7 +172,7 @@ namespace Projet_5.Controllers
                 VehiculeModel = vehicle.Model,
                 Year = vehicle.Year,
                 Finition = vehicle.Finition,
-                Price = transaction?.Amount??0
+                Price = transaction.Amount
             };
 
             return View(model);
@@ -201,9 +188,17 @@ namespace Projet_5.Controllers
             }
 
             var existingVehicle = await _vehicleService.GetVehicleByIdAsync(id);
+            var existingAdvertisement = await _advertisementService.GetAdvertisementByVehicleIdAsync(id);
+
             if (existingVehicle == null)
             {
                 ModelState.AddModelError("", "Véhicule non trouvé.");
+                return View(model);
+            }
+
+            if (existingAdvertisement == null)
+            {
+                ModelState.AddModelError("", "Annonce non trouvée.");
                 return View(model);
             }
 
@@ -212,6 +207,25 @@ namespace Projet_5.Controllers
             existingVehicle.Model = model.VehiculeModel;
             existingVehicle.Year = model.Year;
             existingVehicle.Finition = model.Finition;
+
+            if (model.Photo != null && model.Photo.Length > 0)
+            {
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(model.Photo.FileName);
+                var filePath = Path.Combine(uploadsFolder, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await model.Photo.CopyToAsync(stream);
+                }
+
+                existingVehicle.PhotoPath = "/uploads/" + fileName;
+            }
 
             var result = await _vehicleService.UpdateVehicleAsync(id, existingVehicle);
 
@@ -229,7 +243,10 @@ namespace Projet_5.Controllers
                     VehicleId = model.Id,
                     TransactionDate = DateTime.Now
                 };
+
+                await _transactionService.UpdateTransactionAsync(transaction, transaction.Id);
             }
+
             return RedirectToAction("Index");
         }  
     }

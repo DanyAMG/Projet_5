@@ -3,13 +3,14 @@ using Microsoft.EntityFrameworkCore;
 using Projet_5.Data;
 using Projet_5.Models;
 using System;
+using System.Transactions;
 
 namespace Projet_5.Services
 {
     public class AdvertisementService : IAdvertisementService
     {
         private readonly ApplicationDbContext _context;
-
+        
         public AdvertisementService(ApplicationDbContext context)
         {
             _context = context;
@@ -154,6 +155,71 @@ namespace Projet_5.Services
             return true;
         }
 
-        
+        public async Task<float> CalculateSellingPriceAsync(int vehicleId)
+        {
+            var vehicle = await _context.Vehicles
+                .Include(v => v.Transactions)
+                .Include(v => v.Repairs)
+                .FirstOrDefaultAsync(v => v.Id == vehicleId);
+
+            if (vehicle == null)
+            {
+                throw new Exception("Le vehicule n'existe pas");
+            }
+
+            var purchaseTransaction = vehicle.Transactions.FirstOrDefault(t => t.Type == false);
+            if (purchaseTransaction == null)
+            {
+                throw new Exception("Aucune transaction trouvée pour ce véhicule");
+            }
+
+            var totalRepairCost = vehicle.Repairs.Sum(r => r.Cost);
+
+            var sellingPrice = purchaseTransaction.Amount + totalRepairCost + 500;
+
+            return sellingPrice;
+        }
+
+        public async Task SetSelledAsync(int vehicleId, bool selled)
+        {
+            var vehicle = await _context.Vehicles
+                .Include(v => v.Advertisements)
+                .FirstOrDefaultAsync(v => v.Id == vehicleId);
+
+            if (vehicle == null)
+            {
+                throw new Exception("Le véhicule n'existe pas");
+            }
+            var existingAdvertisement = vehicle.Advertisements.FirstOrDefault();
+            if (existingAdvertisement.Disponibility == false)
+            {
+                throw new Exception("Le véhicule n'est pas encore disponible à la vente");
+            }
+            else
+            {
+                if (selled)
+                {
+                        existingAdvertisement.Selled = true;
+                        _context.Advertisements.Update(existingAdvertisement);
+                        float sellingPrice = await CalculateSellingPriceAsync(vehicleId);
+
+                    var transaction = new Models.Transaction
+                    {
+                        Amount = sellingPrice,
+                        VehicleId = vehicleId,
+                        AdvertisementId = existingAdvertisement.Id,
+                        Type = true,
+                        TransactionDate = DateTime.Now
+                    };
+                    _context.Transactions.Add(transaction);
+                }
+                else
+                {
+                    existingAdvertisement.Selled = false;
+                    _context.Advertisements.Update(existingAdvertisement);
+                }
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }

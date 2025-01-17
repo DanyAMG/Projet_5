@@ -10,6 +10,9 @@ namespace Projet_5.Models
         public int Id { get; set; } //Primary Key
         public float Amount { get; set; }
 
+        //type 0 = Buying transaction and 1 = Selling transaction
+        public bool Type { get; set; }
+
         [Column(TypeName = "DateTime2")]
         public DateTime TransactionDate { get; set; }
 

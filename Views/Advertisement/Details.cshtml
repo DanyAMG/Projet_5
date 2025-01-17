@@ -19,10 +19,14 @@
         </div>
 
         <div style="flex: 2;">
-            @if (Model.Transaction != null)
-                {
-                    <h3>Prix de vente: @Model.Transaction.Amount € </h3>
-                }
+            @if(Model.Advertisement.Disponibility == true || User.IsInRole("Admin"))
+            {
+            @if (Model.SellingPrice != null)
+            {
+                <h3>Prix de vente: @Model.SellingPrice € </h3>
+            }
+            }
+            
             @if (User.IsInRole("Admin"))
             {
                 <p><strong>VIN:</strong> @Model.Vehicle.VIN</p>
@@ -36,11 +40,11 @@
 
             @if (User.IsInRole("Admin"))
             {
-                @if (Model.Transaction != null)
+                @if (Model.BuyingTransaction != null)
                 {
                     <h4>Prix d'achat</h4>
-                    <p><strong>Montant:</strong> @Model.Transaction.Amount €</p>
-                    <p><strong>Date de la transaction:</strong> @Model.Transaction.TransactionDate.ToShortDateString()</p>
+                    <p><strong>Montant:</strong> @Model.BuyingTransaction.Amount €</p>
+                    <p><strong>Date de la transaction:</strong> @Model.BuyingTransaction.TransactionDate.ToShortDateString()</p>
                 }
             }
         </div>
@@ -64,9 +68,6 @@
                             </tr>
                         }
                     </table>
-
-            
-           
                 }
 
         <h4>Disponibilité</h4>
@@ -76,21 +77,34 @@
                 <strong>Disponible à la vente :</strong>
                 <input
                     type="checkbox"
-                    name="isAvailableForSale"
-                    value="true" @(Model.Advertisement?.Disponibility == true ? "checked" : "")
+                    name="disponibility"
+                    value="true" @(Model.Advertisement.Disponibility == true ? "checked" : "")
                     onchange="this.form.submit();" />
             </label>
         </form>
-        <p>
-            <strong>Date de disponibilité :</strong>
-            @(Model.Advertisement?.DisponibilityDate.ToShortDateString() ?? "N/A")
-        </p>
-
+        @if (Model.Advertisement?.Disponibility == true)
+        {
+            <p>
+                <strong>Date de disponibilité :</strong>
+                @(Model.Advertisement?.DisponibilityDate.ToShortDateString() ?? "N/A")
+            </p>
+        
+            <h4>Vente</h4>
+            <form asp-action="SetSelled" asp-controller="Advertisement" method="post">
+                <input type="hidden" name="vehicleId" value="@Model.Vehicle.Id" />
+                <label>
+                    <strong>Vehicule vendu :</strong>
+                    <input type="checkbox"
+                           name="selled"
+                           value="true" @(Model.Advertisement.Selled == true ? "checked" : "")
+                           onchange="this.form.submit();" />
+                </label>
+            </form>
+        }
         <div>
             <a href="@Url.Action("EditCar", "Vehicle", new { id = Model.Vehicle.Id })" class="btn btn-primary">Modifier</a>
             <a href="@Url.Action("AddRepair", "Repair", new { vehicleId = Model.Vehicle.Id })" class="btn btn-secondary">Ajouter une réparation</a>
-        </div>
-                
+        </div> 
             }
 
     <a href="@Url.Action("Index", "Home")" class="btn btn-secondary">Retour à l'accueil</a>

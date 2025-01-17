@@ -11,6 +11,8 @@ namespace Projet_5.Services
         Task<bool> UpdateAdvertisementAsync(Advertisement annoucement);
         Task<bool> DeleteAdvertisementAsync(int id);
         Task SetDisponibilityAsync(int vehicleId, bool disponibility);
+        Task<float> CalculateSellingPriceAsync(int vehicleId);
+        Task SetSelledAsync(int vehicleId, bool selled);
         void ArchiveAnnoucement(bool selled);
         Task<bool> UpdateDescriptionAsync(int advertisementId, string description);
         Task<bool> UpdatePhotoAsync(int advertisementId, string photo);

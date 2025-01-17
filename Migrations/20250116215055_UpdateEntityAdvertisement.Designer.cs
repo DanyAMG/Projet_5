@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Projet_5.Data;
 
@@ -11,9 +12,11 @@ using Projet_5.Data;
 namespace Projet_5.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250116215055_UpdateEntityAdvertisement")]
+    partial class UpdateEntityAdvertisement
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,13 +54,13 @@ namespace Projet_5.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "43361d1d-21fd-4084-ab4c-6302c394a342",
+                            Id = "cf9213cc-70fd-423d-b0ae-ad45060c0a57",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "85ae7732-7085-4dcb-be63-4cb57bcbd5b2",
+                            Id = "197f789d-1fbb-45f8-9d7f-947af20b2eb4",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -313,14 +316,14 @@ namespace Projet_5.Migrations
                     b.Property<int>("AdvertisementId")
                         .HasColumnType("int");
 
-                    b.Property<float>("Amount")
+                    b.Property<float>("BuyingPrice")
                         .HasColumnType("real");
+
+                    b.Property<bool>("SellingPrice")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("TransactionDate")
                         .HasColumnType("DateTime2");
-
-                    b.Property<bool>("Type")
-                        .HasColumnType("bit");
 
                     b.Property<int>("VehicleId")
                         .HasColumnType("int");
