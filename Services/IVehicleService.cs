@@ -9,5 +9,6 @@ namespace Projet_5.Services
         Task<Vehicle> AddVehicleAsync(Vehicle vehicle);
         Task<bool> UpdateVehicleAsync(int id, Vehicle vehicle);
         Task<bool> DeleteVehicleAsync(int id);
+        Task<Vehicle> GetVehicleWithDetailsAsync(int id);
     }
 }

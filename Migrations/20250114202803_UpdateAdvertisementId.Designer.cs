@@ -12,8 +12,8 @@ using Projet_5.Data;
 namespace Projet_5.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241230172809_CorrectionVehicleAnnonce")]
-    partial class CorrectionVehicleAnnonce
+    [Migration("20250114202803_UpdateAdvertisementId")]
+    partial class UpdateAdvertisementId
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,13 +54,13 @@ namespace Projet_5.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "d36f66a1-5aac-46fd-804c-3f8859c5193b",
+                            Id = "45abef28-cec0-4205-b6c1-4bfc88e037da",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "7ebd25ce-08d6-4e6b-8944-74eb0b3933f5",
+                            Id = "0b01ed31-09df-4ed5-b382-9ac5e684e998",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -241,7 +241,7 @@ namespace Projet_5.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Projet_5.Models.Announcement", b =>
+            modelBuilder.Entity("Projet_5.Models.Advertisement", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -260,25 +260,19 @@ namespace Projet_5.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("PhotoPath")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("VehicleAnnonceId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("VehicleId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("selled")
+                    b.Property<bool>("Selled")
                         .HasColumnType("bit");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("VehicleAnnonceId");
-
                     b.HasIndex("VehicleId");
 
-                    b.ToTable("Announcements");
+                    b.ToTable("Advertisements");
                 });
 
             modelBuilder.Entity("Projet_5.Models.Repair", b =>
@@ -289,7 +283,7 @@ namespace Projet_5.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AnnouncementId")
+                    b.Property<int>("AdvertisementsId")
                         .HasColumnType("int");
 
                     b.Property<float>("Cost")
@@ -302,16 +296,11 @@ namespace Projet_5.Migrations
                     b.Property<int>("VehicleId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("VehiculeAnnonceId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("AnnouncementId");
+                    b.HasIndex("AdvertisementsId");
 
                     b.HasIndex("VehicleId");
-
-                    b.HasIndex("VehiculeAnnonceId");
 
                     b.ToTable("Repairs");
                 });
@@ -324,11 +313,11 @@ namespace Projet_5.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("AdvertisementId")
+                        .HasColumnType("int");
+
                     b.Property<float>("Amount")
                         .HasColumnType("real");
-
-                    b.Property<int?>("AnnouncementId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("TransactionDate")
                         .HasColumnType("DateTime2");
@@ -336,16 +325,11 @@ namespace Projet_5.Migrations
                     b.Property<int>("VehicleId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("VehiculeAnnonceId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("AnnouncementId");
+                    b.HasIndex("AdvertisementId");
 
                     b.HasIndex("VehicleId");
-
-                    b.HasIndex("VehiculeAnnonceId");
 
                     b.ToTable("Transactions");
                 });
@@ -388,24 +372,6 @@ namespace Projet_5.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Vehicles");
-                });
-
-            modelBuilder.Entity("Projet_5.Models.VehiculeAnnonce", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("VehicleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("VehicleId");
-
-                    b.ToTable("VehiculeAnnonce");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -459,26 +425,24 @@ namespace Projet_5.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Projet_5.Models.Announcement", b =>
+            modelBuilder.Entity("Projet_5.Models.Advertisement", b =>
                 {
-                    b.HasOne("Projet_5.Models.VehiculeAnnonce", "VehiculeAnnonce")
-                        .WithMany()
-                        .HasForeignKey("VehicleAnnonceId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("Projet_5.Models.Vehicle", "Vehicle")
+                        .WithMany("Advertisements")
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Projet_5.Models.Vehicle", null)
-                        .WithMany("Announcements")
-                        .HasForeignKey("VehicleId");
-
-                    b.Navigation("VehiculeAnnonce");
+                    b.Navigation("Vehicle");
                 });
 
             modelBuilder.Entity("Projet_5.Models.Repair", b =>
                 {
-                    b.HasOne("Projet_5.Models.Announcement", "Annoucement")
+                    b.HasOne("Projet_5.Models.Advertisement", "Advertisements")
                         .WithMany()
-                        .HasForeignKey("AnnouncementId");
+                        .HasForeignKey("AdvertisementsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Projet_5.Models.Vehicle", "Vehicle")
                         .WithMany("Repairs")
@@ -486,20 +450,18 @@ namespace Projet_5.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Projet_5.Models.VehiculeAnnonce", null)
-                        .WithMany("Repairs")
-                        .HasForeignKey("VehiculeAnnonceId");
-
-                    b.Navigation("Annoucement");
+                    b.Navigation("Advertisements");
 
                     b.Navigation("Vehicle");
                 });
 
             modelBuilder.Entity("Projet_5.Models.Transaction", b =>
                 {
-                    b.HasOne("Projet_5.Models.Announcement", "Announcement")
-                        .WithMany()
-                        .HasForeignKey("AnnouncementId");
+                    b.HasOne("Projet_5.Models.Advertisement", "Advertisement")
+                        .WithMany("Transaction")
+                        .HasForeignKey("AdvertisementId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Projet_5.Models.Vehicle", "Vehicle")
                         .WithMany("Transactions")
@@ -507,37 +469,20 @@ namespace Projet_5.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Projet_5.Models.VehiculeAnnonce", null)
-                        .WithMany("Transactions")
-                        .HasForeignKey("VehiculeAnnonceId");
-
-                    b.Navigation("Announcement");
+                    b.Navigation("Advertisement");
 
                     b.Navigation("Vehicle");
                 });
 
-            modelBuilder.Entity("Projet_5.Models.VehiculeAnnonce", b =>
+            modelBuilder.Entity("Projet_5.Models.Advertisement", b =>
                 {
-                    b.HasOne("Projet_5.Models.Vehicle", "Vehicle")
-                        .WithMany()
-                        .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Vehicle");
+                    b.Navigation("Transaction");
                 });
 
             modelBuilder.Entity("Projet_5.Models.Vehicle", b =>
                 {
-                    b.Navigation("Announcements");
+                    b.Navigation("Advertisements");
 
-                    b.Navigation("Repairs");
-
-                    b.Navigation("Transactions");
-                });
-
-            modelBuilder.Entity("Projet_5.Models.VehiculeAnnonce", b =>
-                {
                     b.Navigation("Repairs");
 
                     b.Navigation("Transactions");

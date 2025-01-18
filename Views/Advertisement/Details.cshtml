@@ -1,0 +1,111 @@
+﻿@model VehicleDetailsViewModel
+
+@{
+    ViewData["Title"] = "Détails du véhicule";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div>
+    
+    <div style="display: flex; gap: 20px; align-items: flex-start;">
+        <div style="flex: 1;">
+            @if (!string.IsNullOrEmpty(Model.Vehicle.PhotoPath))
+            {
+                <div>
+                <img src="@Model.Vehicle.PhotoPath" alt="Photo de @Model.Vehicle.Brand @Model.Vehicle.Model" style="max-width: 100%; height: auto;" />
+                </div>
+            }
+        </div>
+
+        <div style="flex: 2;">
+            @if(Model.Advertisement.Disponibility == true || User.IsInRole("Admin"))
+            {
+            @if (Model.SellingPrice != null)
+            {
+                <h3>Prix de vente: @Model.SellingPrice € </h3>
+            }
+            }
+            
+            @if (User.IsInRole("Admin"))
+            {
+                <p><strong>VIN:</strong> @Model.Vehicle.VIN</p>
+            }
+
+            <p><strong>Année:</strong> @Model.Vehicle.Year</p>
+            <p><strong>Marque:</strong> @Model.Vehicle.Brand</p>
+            <p><strong>Modèle:</strong> @Model.Vehicle.Model</p>
+            <p><strong>Finition:</strong> @Model.Vehicle.Finition</p>
+            
+
+            @if (User.IsInRole("Admin"))
+            {
+                @if (Model.BuyingTransaction != null)
+                {
+                    <h4>Prix d'achat</h4>
+                    <p><strong>Montant:</strong> @Model.BuyingTransaction.Amount €</p>
+                    <p><strong>Date de la transaction:</strong> @Model.BuyingTransaction.TransactionDate.ToShortDateString()</p>
+                }
+            }
+        </div>
+    </div>
+            @if (User.IsInRole("Admin"))
+            {
+                @if (Model.Repairs.Any())
+                {
+                    <h4>Réparations effectuées</h4>
+                    <table class="repair">
+                        @foreach (var repair in Model.Repairs)
+                        {
+                            <tr>
+                        <td>@repair.Reparation - @repair.Cost €</td>
+                                <td><a href="@Url.Action("EditRepair", "Repair", new { id = repair.Id })" class="btn btn-primary btn-sm">Modifier</a>
+                                <form asp-action="DeleteRepair" asp-controller="Repair" method="post" style="display:inline;">
+                                    <input type="hidden" name="repairId" value="@repair.Id" />
+                                    <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                            </form>
+                        </td>
+                            </tr>
+                        }
+                    </table>
+                }
+
+        <h4>Disponibilité</h4>
+        <form asp-action="SetDisponibility" asp-controller="Advertisement" method="post">
+            <input type="hidden" name="vehicleId" value="@Model.Vehicle.Id" />
+            <label>
+                <strong>Disponible à la vente :</strong>
+                <input
+                    type="checkbox"
+                    name="disponibility"
+                    value="true" @(Model.Advertisement.Disponibility == true ? "checked" : "")
+                    onchange="this.form.submit();" />
+            </label>
+        </form>
+        @if (Model.Advertisement?.Disponibility == true)
+        {
+            <p>
+                <strong>Date de disponibilité :</strong>
+                @(Model.Advertisement?.DisponibilityDate.ToShortDateString() ?? "N/A")
+            </p>
+        
+            <h4>Vente</h4>
+            <form asp-action="SetSelled" asp-controller="Advertisement" method="post">
+                <input type="hidden" name="vehicleId" value="@Model.Vehicle.Id" />
+                <label>
+                    <strong>Vehicule vendu :</strong>
+                    <input type="checkbox"
+                           name="selled"
+                           value="true" @(Model.Advertisement.Selled == true ? "checked" : "")
+                           onchange="this.form.submit();" />
+                </label>
+            </form>
+        }
+        <div>
+            <a href="@Url.Action("EditCar", "Vehicle", new { id = Model.Vehicle.Id })" class="btn btn-primary">Modifier</a>
+            <a href="@Url.Action("AddRepair", "Repair", new { vehicleId = Model.Vehicle.Id })" class="btn btn-secondary">Ajouter une réparation</a>
+        </div> 
+            }
+
+    <a href="@Url.Action("Index", "Home")" class="btn btn-secondary">Retour à l'accueil</a>
+</div>

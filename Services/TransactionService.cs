@@ -13,18 +13,48 @@ namespace Projet_5.Services
         {
             _context = context;
         }
-
-        public async Task<Transaction> GetTransactionsByIdAsync(int id)
+        public async Task<Transaction> GetTransactionByIdAsync(int id)
         {
             if (id <= 0)
             {
-                throw new ArgumentNullException("VIN cannot be null or empty.", nameof(id));
+                throw new ArgumentNullException("Id cannot be null or empty.", nameof(id));
+            }
+            else
+            {
+                var transaction = await _context.Transactions
+                    .FirstOrDefaultAsync(t => t.Id == id);
+
+                return transaction;
+            }
+        }
+
+        public async Task<Transaction> GetBuyingTransactionByVehicleIdAsync(int vehicleId)
+        {
+            if (vehicleId <= 0)
+            {
+                throw new ArgumentNullException("Id cannot be null or empty.", nameof(vehicleId));
             }
             else
             {
                 var transaction = await _context.Transactions
                     .Include(t => t.Vehicle)
-                    .FirstOrDefaultAsync(t => t.VehicleId == id);
+                    .FirstOrDefaultAsync(t => t.VehicleId == vehicleId && t.Type == false);
+
+                return transaction;
+            }
+        }
+
+        public async Task<Transaction> GetSellingTransactionByVehicleIdAsync(int vehicleId)
+        {
+            if (vehicleId <= 0)
+            {
+                throw new ArgumentNullException("Id cannot be null or empty.", nameof(vehicleId));
+            }
+            else
+            {
+                var transaction = await _context.Transactions
+                    .Include(t => t.Vehicle)
+                    .FirstOrDefaultAsync(t => t.VehicleId == vehicleId && t.Type == true);
 
                 return transaction;
             }
@@ -37,13 +67,15 @@ namespace Projet_5.Services
                 .ToListAsync();
         }
 
-        public async Task<Transaction> AddTransactionAsync(float amount, int vehicleId)
+        public async Task<Transaction> AddTransactionAsync(float amount, int vehicleId, int advertisementId, bool type)
         {
             var transaction = new Transaction
             {
                 Amount = amount,
+                Type = type,
                 TransactionDate = DateTime.Now,
-                VehicleId = vehicleId
+                VehicleId = vehicleId,
+                AdvertisementId = advertisementId
             };
 
             _context.Transactions.Add(transaction);
@@ -53,7 +85,7 @@ namespace Projet_5.Services
 
         public async Task<bool> UpdateTransactionAsync(Transaction transaction, int id)
         {
-            var existingTransaction = await GetTransactionsByIdAsync(id);
+            var existingTransaction = await GetTransactionByIdAsync(id);
 
             if (existingTransaction == null)
             {
@@ -63,6 +95,7 @@ namespace Projet_5.Services
             {
                 existingTransaction.Id = transaction.Id;
                 existingTransaction.Amount = transaction.Amount;
+                existingTransaction.Type = transaction.Type;
                 existingTransaction.TransactionDate = transaction.TransactionDate;
 
                 await _context.SaveChangesAsync();
@@ -73,7 +106,7 @@ namespace Projet_5.Services
 
         public async Task<bool> DeleteTransactionAsync(int id)
         {
-            var transaction = await GetTransactionsByIdAsync(id);
+            var transaction = await GetTransactionByIdAsync(id);
             if (transaction == null)
             {
                 return false;
@@ -86,6 +119,7 @@ namespace Projet_5.Services
                 return true;
             }
         }
-
+        
     }
+    
 }

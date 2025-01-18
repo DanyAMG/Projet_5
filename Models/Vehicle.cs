@@ -30,8 +30,8 @@ namespace Projet_5.Models
 
         public string PhotoPath { get; set; }
 
-
-        public ICollection<Announcement> Announcements { get; set; }
+        
+        public ICollection<Advertisement> Advertisements { get; set; }
         public ICollection<Transaction> Transactions { get; set; }
         public ICollection<Repair> Repairs { get; set; }
     }

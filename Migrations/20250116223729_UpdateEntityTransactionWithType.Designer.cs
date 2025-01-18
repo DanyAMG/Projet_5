@@ -12,8 +12,8 @@ using Projet_5.Data;
 namespace Projet_5.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241113022725_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250116223729_UpdateEntityTransactionWithType")]
+    partial class UpdateEntityTransactionWithType
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,6 +50,20 @@ namespace Projet_5.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "43361d1d-21fd-4084-ab4c-6302c394a342",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "85ae7732-7085-4dcb-be63-4cb57bcbd5b2",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -227,7 +241,7 @@ namespace Projet_5.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Projet_5.Models.Purchase", b =>
+            modelBuilder.Entity("Projet_5.Models.Advertisement", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -235,32 +249,30 @@ namespace Projet_5.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<float>("BuyingPrice")
-                        .HasColumnType("real");
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("PurchaseDate")
-                        .HasColumnType("DateTime2");
+                    b.Property<bool>("Disponibility")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("DisponibilityDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PhotoPath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Selled")
+                        .HasColumnType("bit");
 
                     b.Property<int>("VehicleId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("VehicleId1")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("VehicleId2")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("VehicleId");
 
-                    b.HasIndex("VehicleId1");
-
-                    b.HasIndex("VehicleId2")
-                        .IsUnique()
-                        .HasFilter("[VehicleId2] IS NOT NULL");
-
-                    b.ToTable("Purchases");
+                    b.ToTable("Advertisements");
                 });
 
             modelBuilder.Entity("Projet_5.Models.Repair", b =>
@@ -271,29 +283,29 @@ namespace Projet_5.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("RepaireType")
+                    b.Property<int>("AdvertisementsId")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Cost")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Reparation")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<float>("ReparationCost")
-                        .HasColumnType("real");
 
                     b.Property<int>("VehicleId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("VehicleId1")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("VehicleId");
+                    b.HasIndex("AdvertisementsId");
 
-                    b.HasIndex("VehicleId1");
+                    b.HasIndex("VehicleId");
 
                     b.ToTable("Repairs");
                 });
 
-            modelBuilder.Entity("Projet_5.Models.Sell", b =>
+            modelBuilder.Entity("Projet_5.Models.Transaction", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -301,32 +313,28 @@ namespace Projet_5.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("SellingDate")
+                    b.Property<int>("AdvertisementId")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Amount")
+                        .HasColumnType("real");
+
+                    b.Property<DateTime>("TransactionDate")
                         .HasColumnType("DateTime2");
 
-                    b.Property<float>("SellingPrice")
-                        .HasColumnType("real");
+                    b.Property<bool>("Type")
+                        .HasColumnType("bit");
 
                     b.Property<int>("VehicleId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("VehicleId1")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("VehicleId2")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("AdvertisementId");
 
                     b.HasIndex("VehicleId");
 
-                    b.HasIndex("VehicleId1");
-
-                    b.HasIndex("VehicleId2")
-                        .IsUnique()
-                        .HasFilter("[VehicleId2] IS NOT NULL");
-
-                    b.ToTable("Sells");
+                    b.ToTable("Transactions");
                 });
 
             modelBuilder.Entity("Projet_5.Models.Vehicle", b =>
@@ -339,22 +347,27 @@ namespace Projet_5.Migrations
 
                     b.Property<string>("Brand")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Finition")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsAvailable")
-                        .HasColumnType("bit");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Model")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("PhotoPath")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("VIN")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(17)
+                        .HasColumnType("nvarchar(17)");
 
                     b.Property<int>("Year")
                         .HasColumnType("int");
@@ -415,72 +428,67 @@ namespace Projet_5.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Projet_5.Models.Purchase", b =>
+            modelBuilder.Entity("Projet_5.Models.Advertisement", b =>
                 {
                     b.HasOne("Projet_5.Models.Vehicle", "Vehicle")
-                        .WithMany()
+                        .WithMany("Advertisements")
                         .HasForeignKey("VehicleId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("Projet_5.Models.Vehicle", null)
-                        .WithMany("Purchases")
-                        .HasForeignKey("VehicleId1");
-
-                    b.HasOne("Projet_5.Models.Vehicle", null)
-                        .WithOne("Purchase")
-                        .HasForeignKey("Projet_5.Models.Purchase", "VehicleId2");
 
                     b.Navigation("Vehicle");
                 });
 
             modelBuilder.Entity("Projet_5.Models.Repair", b =>
                 {
-                    b.HasOne("Projet_5.Models.Vehicle", "Vehicle")
+                    b.HasOne("Projet_5.Models.Advertisement", "Advertisements")
                         .WithMany()
-                        .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("AdvertisementsId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Projet_5.Models.Vehicle", null)
+                    b.HasOne("Projet_5.Models.Vehicle", "Vehicle")
                         .WithMany("Repairs")
-                        .HasForeignKey("VehicleId1");
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Advertisements");
 
                     b.Navigation("Vehicle");
                 });
 
-            modelBuilder.Entity("Projet_5.Models.Sell", b =>
+            modelBuilder.Entity("Projet_5.Models.Transaction", b =>
                 {
-                    b.HasOne("Projet_5.Models.Vehicle", "Vehicle")
-                        .WithMany()
-                        .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                    b.HasOne("Projet_5.Models.Advertisement", "Advertisement")
+                        .WithMany("Transaction")
+                        .HasForeignKey("AdvertisementId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Projet_5.Models.Vehicle", null)
-                        .WithMany("Sells")
-                        .HasForeignKey("VehicleId1");
+                    b.HasOne("Projet_5.Models.Vehicle", "Vehicle")
+                        .WithMany("Transactions")
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("Projet_5.Models.Vehicle", null)
-                        .WithOne("Sell")
-                        .HasForeignKey("Projet_5.Models.Sell", "VehicleId2");
+                    b.Navigation("Advertisement");
 
                     b.Navigation("Vehicle");
+                });
+
+            modelBuilder.Entity("Projet_5.Models.Advertisement", b =>
+                {
+                    b.Navigation("Transaction");
                 });
 
             modelBuilder.Entity("Projet_5.Models.Vehicle", b =>
                 {
-                    b.Navigation("Purchase")
-                        .IsRequired();
-
-                    b.Navigation("Purchases");
+                    b.Navigation("Advertisements");
 
                     b.Navigation("Repairs");
 
-                    b.Navigation("Sell")
-                        .IsRequired();
-
-                    b.Navigation("Sells");
+                    b.Navigation("Transactions");
                 });
 #pragma warning restore 612, 618
         }

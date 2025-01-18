@@ -22,11 +22,11 @@ namespace Projet_5.Models
         [StringLength(50, ErrorMessage = "La finition ne peut pas dépasser 50 caractères.")]
         public string Finition { get; set; }
 
-        [Required(ErrorMessage = "Veuillez ajouter une photo.")]
-        public IFormFile Photo { get; set; }
+        public IFormFile? Photo { get; set; }
 
         [Required(ErrorMessage = "Veuillez ajouter un prix d'achat.")]
         [Range(0.01, double.MaxValue, ErrorMessage = "Le prix d'achat doit être supérieur à 0.")]
         public float Price { get; set; }
+        public float SellingPrice { get; set; }
     }
 }

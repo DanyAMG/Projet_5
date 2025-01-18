@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Projet_5.Data;
 
@@ -11,9 +12,11 @@ using Projet_5.Data;
 namespace Projet_5.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250114145831_EntitiesMaj")]
+    partial class EntitiesMaj
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,13 +54,13 @@ namespace Projet_5.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "43361d1d-21fd-4084-ab4c-6302c394a342",
+                            Id = "41bc1d3f-4f47-4470-8256-456d273fd9a5",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "85ae7732-7085-4dcb-be63-4cb57bcbd5b2",
+                            Id = "66bfef11-3625-4de1-a3a5-e7b5be5f5223",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -257,6 +260,7 @@ namespace Projet_5.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("PhotoPath")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Selled")
@@ -280,7 +284,7 @@ namespace Projet_5.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AdvertisementsId")
+                    b.Property<int>("AdvertisementId")
                         .HasColumnType("int");
 
                     b.Property<float>("Cost")
@@ -295,7 +299,7 @@ namespace Projet_5.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AdvertisementsId");
+                    b.HasIndex("AdvertisementId");
 
                     b.HasIndex("VehicleId");
 
@@ -318,9 +322,6 @@ namespace Projet_5.Migrations
 
                     b.Property<DateTime>("TransactionDate")
                         .HasColumnType("DateTime2");
-
-                    b.Property<bool>("Type")
-                        .HasColumnType("bit");
 
                     b.Property<int>("VehicleId")
                         .HasColumnType("int");
@@ -438,9 +439,9 @@ namespace Projet_5.Migrations
 
             modelBuilder.Entity("Projet_5.Models.Repair", b =>
                 {
-                    b.HasOne("Projet_5.Models.Advertisement", "Advertisements")
+                    b.HasOne("Projet_5.Models.Advertisement", "Advertisement")
                         .WithMany()
-                        .HasForeignKey("AdvertisementsId")
+                        .HasForeignKey("AdvertisementId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -450,7 +451,7 @@ namespace Projet_5.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Advertisements");
+                    b.Navigation("Advertisement");
 
                     b.Navigation("Vehicle");
                 });
@@ -458,7 +459,7 @@ namespace Projet_5.Migrations
             modelBuilder.Entity("Projet_5.Models.Transaction", b =>
                 {
                     b.HasOne("Projet_5.Models.Advertisement", "Advertisement")
-                        .WithMany("Transaction")
+                        .WithMany()
                         .HasForeignKey("AdvertisementId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -472,11 +473,6 @@ namespace Projet_5.Migrations
                     b.Navigation("Advertisement");
 
                     b.Navigation("Vehicle");
-                });
-
-            modelBuilder.Entity("Projet_5.Models.Advertisement", b =>
-                {
-                    b.Navigation("Transaction");
                 });
 
             modelBuilder.Entity("Projet_5.Models.Vehicle", b =>

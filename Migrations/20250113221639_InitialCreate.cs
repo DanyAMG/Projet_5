@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Projet_5.Migrations
 {
     /// <inheritdoc />
@@ -56,12 +58,12 @@ namespace Projet_5.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    VIN = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    VIN = table.Column<string>(type: "nvarchar(17)", maxLength: 17, nullable: false),
                     Year = table.Column<int>(type: "int", nullable: false),
-                    Brand = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Model = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Finition = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsAvailable = table.Column<bool>(type: "bit", nullable: false)
+                    Brand = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Model = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Finition = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    PhotoPath = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -175,36 +177,27 @@ namespace Projet_5.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Purchases",
+                name: "Advertisements",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    BuyingPrice = table.Column<float>(type: "real", nullable: false),
-                    PurchaseDate = table.Column<DateTime>(type: "DateTime2", nullable: false),
-                    VehicleId = table.Column<int>(type: "int", nullable: false),
-                    VehicleId1 = table.Column<int>(type: "int", nullable: true),
-                    VehicleId2 = table.Column<int>(type: "int", nullable: true)
+                    DisponibilityDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Disponibility = table.Column<bool>(type: "bit", nullable: false),
+                    Selled = table.Column<bool>(type: "bit", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhotoPath = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    VehicleId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Purchases", x => x.Id);
+                    table.PrimaryKey("PK_Advertisements", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Purchases_Vehicles_VehicleId",
+                        name: "FK_Advertisements_Vehicles_VehicleId",
                         column: x => x.VehicleId,
                         principalTable: "Vehicles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Purchases_Vehicles_VehicleId1",
-                        column: x => x.VehicleId1,
-                        principalTable: "Vehicles",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Purchases_Vehicles_VehicleId2",
-                        column: x => x.VehicleId2,
-                        principalTable: "Vehicles",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -213,59 +206,69 @@ namespace Projet_5.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    RepaireType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ReparationCost = table.Column<float>(type: "real", nullable: false),
+                    Reparation = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Cost = table.Column<float>(type: "real", nullable: false),
                     VehicleId = table.Column<int>(type: "int", nullable: false),
-                    VehicleId1 = table.Column<int>(type: "int", nullable: true)
+                    AdvertisementId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Repairs", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Repairs_Advertisements_AdvertisementId",
+                        column: x => x.AdvertisementId,
+                        principalTable: "Advertisements",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_Repairs_Vehicles_VehicleId",
                         column: x => x.VehicleId,
                         principalTable: "Vehicles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Repairs_Vehicles_VehicleId1",
-                        column: x => x.VehicleId1,
-                        principalTable: "Vehicles",
-                        principalColumn: "Id");
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Sells",
+                name: "Transactions",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    SellingPrice = table.Column<float>(type: "real", nullable: false),
-                    SellingDate = table.Column<DateTime>(type: "DateTime2", nullable: false),
+                    Amount = table.Column<float>(type: "real", nullable: false),
+                    TransactionDate = table.Column<DateTime>(type: "DateTime2", nullable: false),
                     VehicleId = table.Column<int>(type: "int", nullable: false),
-                    VehicleId1 = table.Column<int>(type: "int", nullable: true),
-                    VehicleId2 = table.Column<int>(type: "int", nullable: true)
+                    AdvertisementId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Sells", x => x.Id);
+                    table.PrimaryKey("PK_Transactions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Sells_Vehicles_VehicleId",
+                        name: "FK_Transactions_Advertisements_AdvertisementId",
+                        column: x => x.AdvertisementId,
+                        principalTable: "Advertisements",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Transactions_Vehicles_VehicleId",
                         column: x => x.VehicleId,
                         principalTable: "Vehicles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Sells_Vehicles_VehicleId1",
-                        column: x => x.VehicleId1,
-                        principalTable: "Vehicles",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Sells_Vehicles_VehicleId2",
-                        column: x => x.VehicleId2,
-                        principalTable: "Vehicles",
-                        principalColumn: "Id");
+                        onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "300a14cb-9bd8-4f16-8e66-8dc14fb8b9e8", null, "Admin", "ADMIN" },
+                    { "8be57049-a8fc-416a-af8f-f7b0fd8080ff", null, "User", "USER" }
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Advertisements_VehicleId",
+                table: "Advertisements",
+                column: "VehicleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -307,21 +310,9 @@ namespace Projet_5.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Purchases_VehicleId",
-                table: "Purchases",
-                column: "VehicleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Purchases_VehicleId1",
-                table: "Purchases",
-                column: "VehicleId1");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Purchases_VehicleId2",
-                table: "Purchases",
-                column: "VehicleId2",
-                unique: true,
-                filter: "[VehicleId2] IS NOT NULL");
+                name: "IX_Repairs_AdvertisementId",
+                table: "Repairs",
+                column: "AdvertisementId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Repairs_VehicleId",
@@ -329,26 +320,14 @@ namespace Projet_5.Migrations
                 column: "VehicleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Repairs_VehicleId1",
-                table: "Repairs",
-                column: "VehicleId1");
+                name: "IX_Transactions_AdvertisementId",
+                table: "Transactions",
+                column: "AdvertisementId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Sells_VehicleId",
-                table: "Sells",
+                name: "IX_Transactions_VehicleId",
+                table: "Transactions",
                 column: "VehicleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Sells_VehicleId1",
-                table: "Sells",
-                column: "VehicleId1");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Sells_VehicleId2",
-                table: "Sells",
-                column: "VehicleId2",
-                unique: true,
-                filter: "[VehicleId2] IS NOT NULL");
         }
 
         /// <inheritdoc />
@@ -370,19 +349,19 @@ namespace Projet_5.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Purchases");
-
-            migrationBuilder.DropTable(
                 name: "Repairs");
 
             migrationBuilder.DropTable(
-                name: "Sells");
+                name: "Transactions");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Advertisements");
 
             migrationBuilder.DropTable(
                 name: "Vehicles");

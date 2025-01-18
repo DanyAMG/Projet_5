@@ -13,11 +13,13 @@ namespace Projet_5.Controllers
         private readonly IVehicleService _vehicleService;
         private readonly ITransactionService _transactionService;
         private readonly IRepairService _repairService;
-        public VehicleController(IVehicleService vehicleService, ITransactionService transactionService, IRepairService repairService)
+        private readonly IAdvertisementService _advertisementService;
+        public VehicleController(IVehicleService vehicleService, ITransactionService transactionService, IRepairService repairService, IAdvertisementService advertisementService)
         {
             _vehicleService = vehicleService;
             _transactionService = transactionService;
             _repairService = repairService;
+            _advertisementService = advertisementService;
         }
 
         [Authorize(Roles = "Admin")]
@@ -94,7 +96,16 @@ namespace Projet_5.Controllers
             
             await _vehicleService.AddVehicleAsync(vehicle);
 
-            await _transactionService.AddTransactionAsync(model.Price, vehicle.Id);
+            var advertisement = new Advertisement
+            {
+                Disponibility = false,
+                Selled = false,
+                Description = "this is a vehicle",
+            };
+
+            await _advertisementService.AddAdvertisementAsync(advertisement, vehicle);
+            bool transactiontype = false;
+            await _transactionService.AddTransactionAsync(model.Price, vehicle.Id, advertisement.Id, transactiontype);
 
             return RedirectToAction("VehicleAdded");
         }
@@ -140,13 +151,20 @@ namespace Projet_5.Controllers
         public async Task<IActionResult> EditCar(int id)
         {
             var vehicle = await _vehicleService.GetVehicleByIdAsync(id);
+
+            var advertisement = await _advertisementService.GetAdvertisementByVehicleIdAsync(id);
+
+            var transaction = await _transactionService.GetBuyingTransactionByVehicleIdAsync(id);
+
             if (vehicle == null)
             {
                 return NotFound();
             }
 
-            var transaction = await _transactionService.GetTransactionsByIdAsync(id);
-
+            if (advertisement == null)
+            {
+                return NotFound();
+            }
             var model = new VehicleViewModel
             {
                 VIN = vehicle.VIN,
@@ -154,7 +172,7 @@ namespace Projet_5.Controllers
                 VehiculeModel = vehicle.Model,
                 Year = vehicle.Year,
                 Finition = vehicle.Finition,
-                Price = transaction?.Amount??0
+                Price = transaction.Amount
             };
 
             return View(model);
@@ -169,16 +187,52 @@ namespace Projet_5.Controllers
                 return View(model);
             }
 
-            var vehicle = new Vehicle
-            {
-                VIN = model.VIN,
-                Brand = model.Brand,
-                Model = model.VehiculeModel,
-                Year = model.Year,
-                Finition = model.Finition
-            };
+            var existingVehicle = await _vehicleService.GetVehicleByIdAsync(id);
+            var existingAdvertisement = await _advertisementService.GetAdvertisementByVehicleIdAsync(id);
+            var existingTransaction = await _transactionService.GetBuyingTransactionByVehicleIdAsync(id);
 
-            var result = await _vehicleService.UpdateVehicleAsync(id, vehicle);
+            if (existingVehicle == null)
+            {
+                ModelState.AddModelError("", "Véhicule non trouvé.");
+                return View(model);
+            }
+
+            if (existingAdvertisement == null)
+            {
+                ModelState.AddModelError("", "Annonce non trouvée.");
+                return View(model);
+            }
+
+            existingVehicle.VIN = model.VIN;
+            existingVehicle.Brand = model.Brand;
+            existingVehicle.Model = model.VehiculeModel;
+            existingVehicle.Year = model.Year;
+            existingVehicle.Finition = model.Finition;
+
+            if (model.Photo != null && model.Photo.Length > 0)
+            {
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(model.Photo.FileName);
+                var filePath = Path.Combine(uploadsFolder, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await model.Photo.CopyToAsync(stream);
+                }
+
+                existingVehicle.PhotoPath = "/uploads/" + fileName;
+            }
+            else
+            {
+                existingVehicle.PhotoPath = existingVehicle.PhotoPath;
+            }
+            var result = await _vehicleService.UpdateVehicleAsync(id, existingVehicle);
+
             if (!result)
             {
                 ModelState.AddModelError("", "Erreur lors de la mise à jour du véhicule.");
@@ -187,15 +241,12 @@ namespace Projet_5.Controllers
 
             if (model.Price > 0)
             {
-                var transaction = new Transaction
-                {
-                    Amount = model.Price,
-                    VehicleId = model.Id,
-                    TransactionDate = DateTime.Now
-                };
-                await _transactionService.AddTransactionAsync(model.Price, vehicle.Id);
+                existingTransaction.Amount = model.Price;
+                existingTransaction.TransactionDate = DateTime.Now;
+                await _transactionService.UpdateTransactionAsync(existingTransaction, existingTransaction.Id);
             }
-            return RedirectToAction("Index");
+
+            return RedirectToAction("Details", "Advertisement", new { id = id });
         }  
     }
 }

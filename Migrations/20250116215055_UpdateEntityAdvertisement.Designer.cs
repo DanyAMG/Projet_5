@@ -12,8 +12,8 @@ using Projet_5.Data;
 namespace Projet_5.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241204165952_AddPhotoPathToVehicle")]
-    partial class AddPhotoPathToVehicle
+    [Migration("20250116215055_UpdateEntityAdvertisement")]
+    partial class UpdateEntityAdvertisement
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,6 +50,20 @@ namespace Projet_5.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "cf9213cc-70fd-423d-b0ae-ad45060c0a57",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "197f789d-1fbb-45f8-9d7f-947af20b2eb4",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -227,7 +241,7 @@ namespace Projet_5.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Projet_5.Models.Announcement", b =>
+            modelBuilder.Entity("Projet_5.Models.Advertisement", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -246,25 +260,19 @@ namespace Projet_5.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("PhotoPath")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("VehicleId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("VehiculeAnnonceId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("selled")
+                    b.Property<bool>("Selled")
                         .HasColumnType("bit");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("VehicleId");
 
-                    b.HasIndex("VehiculeAnnonceId");
-
-                    b.ToTable("Announcements");
+                    b.ToTable("Advertisements");
                 });
 
             modelBuilder.Entity("Projet_5.Models.Repair", b =>
@@ -275,7 +283,7 @@ namespace Projet_5.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AnnouncementId")
+                    b.Property<int>("AdvertisementsId")
                         .HasColumnType("int");
 
                     b.Property<float>("Cost")
@@ -288,16 +296,11 @@ namespace Projet_5.Migrations
                     b.Property<int>("VehicleId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("VehiculeAnnonceId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("AnnouncementId");
+                    b.HasIndex("AdvertisementsId");
 
                     b.HasIndex("VehicleId");
-
-                    b.HasIndex("VehiculeAnnonceId");
 
                     b.ToTable("Repairs");
                 });
@@ -310,11 +313,14 @@ namespace Projet_5.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<float>("Amount")
+                    b.Property<int>("AdvertisementId")
+                        .HasColumnType("int");
+
+                    b.Property<float>("BuyingPrice")
                         .HasColumnType("real");
 
-                    b.Property<int?>("AnnouncementId")
-                        .HasColumnType("int");
+                    b.Property<bool>("SellingPrice")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("TransactionDate")
                         .HasColumnType("DateTime2");
@@ -322,16 +328,11 @@ namespace Projet_5.Migrations
                     b.Property<int>("VehicleId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("VehiculeAnnonceId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("AnnouncementId");
+                    b.HasIndex("AdvertisementId");
 
                     b.HasIndex("VehicleId");
-
-                    b.HasIndex("VehiculeAnnonceId");
 
                     b.ToTable("Transactions");
                 });
@@ -374,24 +375,6 @@ namespace Projet_5.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Vehicles");
-                });
-
-            modelBuilder.Entity("Projet_5.Models.VehiculeAnnonce", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("VehicleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("VehicleId");
-
-                    b.ToTable("VehiculeAnnonce");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -445,26 +428,24 @@ namespace Projet_5.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Projet_5.Models.Announcement", b =>
+            modelBuilder.Entity("Projet_5.Models.Advertisement", b =>
                 {
-                    b.HasOne("Projet_5.Models.Vehicle", null)
-                        .WithMany("Announcements")
-                        .HasForeignKey("VehicleId");
-
-                    b.HasOne("Projet_5.Models.VehiculeAnnonce", "VehiculeAnnonce")
-                        .WithMany()
-                        .HasForeignKey("VehiculeAnnonceId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("Projet_5.Models.Vehicle", "Vehicle")
+                        .WithMany("Advertisements")
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("VehiculeAnnonce");
+                    b.Navigation("Vehicle");
                 });
 
             modelBuilder.Entity("Projet_5.Models.Repair", b =>
                 {
-                    b.HasOne("Projet_5.Models.Announcement", "Annoucement")
+                    b.HasOne("Projet_5.Models.Advertisement", "Advertisements")
                         .WithMany()
-                        .HasForeignKey("AnnouncementId");
+                        .HasForeignKey("AdvertisementsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Projet_5.Models.Vehicle", "Vehicle")
                         .WithMany("Repairs")
@@ -472,20 +453,18 @@ namespace Projet_5.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Projet_5.Models.VehiculeAnnonce", null)
-                        .WithMany("Repairs")
-                        .HasForeignKey("VehiculeAnnonceId");
-
-                    b.Navigation("Annoucement");
+                    b.Navigation("Advertisements");
 
                     b.Navigation("Vehicle");
                 });
 
             modelBuilder.Entity("Projet_5.Models.Transaction", b =>
                 {
-                    b.HasOne("Projet_5.Models.Announcement", "Announcement")
-                        .WithMany()
-                        .HasForeignKey("AnnouncementId");
+                    b.HasOne("Projet_5.Models.Advertisement", "Advertisement")
+                        .WithMany("Transaction")
+                        .HasForeignKey("AdvertisementId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Projet_5.Models.Vehicle", "Vehicle")
                         .WithMany("Transactions")
@@ -493,37 +472,20 @@ namespace Projet_5.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Projet_5.Models.VehiculeAnnonce", null)
-                        .WithMany("Transactions")
-                        .HasForeignKey("VehiculeAnnonceId");
-
-                    b.Navigation("Announcement");
+                    b.Navigation("Advertisement");
 
                     b.Navigation("Vehicle");
                 });
 
-            modelBuilder.Entity("Projet_5.Models.VehiculeAnnonce", b =>
+            modelBuilder.Entity("Projet_5.Models.Advertisement", b =>
                 {
-                    b.HasOne("Projet_5.Models.Vehicle", "Vehicle")
-                        .WithMany()
-                        .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Vehicle");
+                    b.Navigation("Transaction");
                 });
 
             modelBuilder.Entity("Projet_5.Models.Vehicle", b =>
                 {
-                    b.Navigation("Announcements");
+                    b.Navigation("Advertisements");
 
-                    b.Navigation("Repairs");
-
-                    b.Navigation("Transactions");
-                });
-
-            modelBuilder.Entity("Projet_5.Models.VehiculeAnnonce", b =>
-                {
                     b.Navigation("Repairs");
 
                     b.Navigation("Transactions");

@@ -18,9 +18,9 @@ namespace Projet_5.Controllers
         }
 
         [HttpGet("{vin}")]
-        public async Task<IActionResult> GetTransactionByVin(int id)
+        public async Task<IActionResult> GetTransactionById(int id)
         {
-            var transaction= await _transactionService.GetTransactionsByIdAsync(id);
+            var transaction = await _transactionService.GetTransactionByIdAsync(id);
             if (transaction == null)
             {
                 return NotFound();
@@ -46,9 +46,9 @@ namespace Projet_5.Controllers
                 return BadRequest();
             }
 
-            var createdTransaction = await _transactionService.AddTransactionAsync(transaction.Amount, transaction.VehicleId);
+            var createdTransaction = await _transactionService.AddTransactionAsync(transaction.Amount, transaction.VehicleId, transaction.AdvertisementId, transaction.Type);
 
-            return CreatedAtAction(nameof(GetTransactionByVin), new { id = createdTransaction.Id }, createdTransaction);
+            return CreatedAtAction(nameof(GetTransactionById), new { id = createdTransaction.Id }, createdTransaction);
         }
 
         [HttpPut]
@@ -66,7 +66,7 @@ namespace Projet_5.Controllers
 
             try
             {
-               
+
                 var success = await _transactionService.UpdateTransactionAsync(updatedTransaction, id);
 
                 if (!success)
@@ -78,11 +78,9 @@ namespace Projet_5.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 return StatusCode(500, $"Erreur interne : {ex.Message}");
             }
         }
-
-
     }
-}
+    }
