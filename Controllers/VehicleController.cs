@@ -189,6 +189,7 @@ namespace Projet_5.Controllers
 
             var existingVehicle = await _vehicleService.GetVehicleByIdAsync(id);
             var existingAdvertisement = await _advertisementService.GetAdvertisementByVehicleIdAsync(id);
+            var existingTransaction = await _transactionService.GetBuyingTransactionByVehicleIdAsync(id);
 
             if (existingVehicle == null)
             {
@@ -226,7 +227,10 @@ namespace Projet_5.Controllers
 
                 existingVehicle.PhotoPath = "/uploads/" + fileName;
             }
-
+            else
+            {
+                existingVehicle.PhotoPath = existingVehicle.PhotoPath;
+            }
             var result = await _vehicleService.UpdateVehicleAsync(id, existingVehicle);
 
             if (!result)
@@ -237,17 +241,12 @@ namespace Projet_5.Controllers
 
             if (model.Price > 0)
             {
-                var transaction = new Transaction
-                {
-                    Amount = model.Price,
-                    VehicleId = model.Id,
-                    TransactionDate = DateTime.Now
-                };
-
-                await _transactionService.UpdateTransactionAsync(transaction, transaction.Id);
+                existingTransaction.Amount = model.Price;
+                existingTransaction.TransactionDate = DateTime.Now;
+                await _transactionService.UpdateTransactionAsync(existingTransaction, existingTransaction.Id);
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Details", "Advertisement", new { id = id });
         }  
     }
 }
