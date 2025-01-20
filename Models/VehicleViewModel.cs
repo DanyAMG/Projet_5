@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Projet_5.Attributes;
+using System.ComponentModel.DataAnnotations;
 
 namespace Projet_5.Models
 {
@@ -16,9 +17,11 @@ namespace Projet_5.Models
         [Required(ErrorMessage = "Le modèle est obligatoire.")]
         public string VehiculeModel { get; set; }
 
-        [Range(1990, 9999, ErrorMessage = "Veuillez entrer une année valide.")]
+        [Required]
+        [YearRange]
         public int Year { get; set; }
 
+        [Required]
         [StringLength(50, ErrorMessage = "La finition ne peut pas dépasser 50 caractères.")]
         public string Finition { get; set; }
 

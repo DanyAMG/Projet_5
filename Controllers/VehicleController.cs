@@ -93,7 +93,11 @@ namespace Projet_5.Controllers
 
                 vehicle.PhotoPath = "/uploads/" + fileName;
             }
-            
+            else
+            {
+                vehicle.PhotoPath = "/uploads/default.png";
+            }
+
             await _vehicleService.AddVehicleAsync(vehicle);
 
             var advertisement = new Advertisement
