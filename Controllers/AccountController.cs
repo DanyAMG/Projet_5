@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Projet_5.Models;
+
+/// <summary>
+/// Contrôleur gérant les opérations d'authentification et de gestion de compte utilisateur.
+/// </summary>
 public class AccountController : Controller
 {
     private readonly SignInManager<IdentityUser> signInManager;
