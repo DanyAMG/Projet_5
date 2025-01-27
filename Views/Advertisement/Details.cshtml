@@ -13,7 +13,9 @@
             @if (!string.IsNullOrEmpty(Model.Vehicle.PhotoPath))
             {
                 <div>
-                <img src="@Model.Vehicle.PhotoPath" alt="Photo de @Model.Vehicle.Brand @Model.Vehicle.Model" style="max-width: 100%; height: auto;" />
+                <img src="@Model.Vehicle.PhotoPath"
+                         alt="@($"{Model.Vehicle.Brand} {Model.Vehicle.Model} - Image de présentation")"
+                style="max-width: 100%; height: auto;" />
                 </div>
             }
         </div>
@@ -102,10 +104,14 @@
             </form>
         }
         <div>
-            <a href="@Url.Action("EditCar", "Vehicle", new { id = Model.Vehicle.Id })" class="btn btn-primary">Modifier</a>
+            <a href="@Url.Action("EditCar", "Vehicle", new { id = Model.Vehicle.Id })" class="btn btn-primary">Modifier le véhicule</a>
             <a href="@Url.Action("AddRepair", "Repair", new { vehicleId = Model.Vehicle.Id })" class="btn btn-secondary">Ajouter une réparation</a>
-        </div> 
-            }
+        </div>
+        <form asp-controller="Vehicle" asp-action="DeleteVehicle" method="post">
+            <input type="hidden" name="id" value="@Model.Vehicle.Id" />
+            <button type="submit" class="btn btn-danger">Supprimer le véhicule</button>
+        </form>
+        }
 
     <a href="@Url.Action("Index", "Home")" class="btn btn-secondary">Retour à l'accueil</a>
 </div>
